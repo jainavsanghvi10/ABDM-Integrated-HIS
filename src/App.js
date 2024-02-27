@@ -1,24 +1,31 @@
-import logo from './logo.svg';
 import './App.css';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
+import PatientLogin from './components/Patient/PatientLogin'
+import PatientRegister from './components/Patient/PatientRegister'
+import PatientProfile from './components/Patient/PatientProfile';
+import PatientDocuments from './components/Patient/PatientDocuments';
+import HprLogin from './components/HealthcareProfessional/HprLogin';
+import HprRegister from './components/HealthcareProfessional/HprRegister';
+import HipLogin from './components/Hospital/HipLogin';
+import HipRegister from './components/Hospital/HipRegister';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      {/* <Navbar/> */}
+      <Routes>
+        <Route path="/patient/login" element={<PatientLogin />} />
+        <Route path="/patient/register" element={<PatientRegister />} />
+        <Route path="/patient/profile" element={<PatientProfile />} />
+        <Route path="/patient/documents" element={<PatientDocuments />} />
+        <Route path="/hpr/login" element={<HprLogin/>} />
+        <Route path="/hpr/register" element={<HprRegister/>} />
+        <Route path="/hip/login" element={<HipLogin/>} />
+        <Route path="/hip/register" element={<HipRegister/>} />
+      </Routes>
+    </Router>
   );
 }
 
