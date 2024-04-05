@@ -10,6 +10,11 @@ import HprLogin from './components/HealthcareProfessional/HprLogin';
 import HprRegister from './components/HealthcareProfessional/HprRegister';
 import HipLogin from './components/Hospital/HipLogin';
 import HipRegister from './components/Hospital/HipRegister';
+import ABHAGenerator from './components/Generator'
+import DoctorsList from './components/DoctorsList';
+import PatientStatusList from './components/PatientStatusList'
+import UserLogin from './components/UserLogin';
+import AddStaff from './components/AddStaff';
 
 function App() {
   return (
@@ -24,6 +29,11 @@ function App() {
         <Route path="/hpr/register" element={<HprRegister/>} />
         <Route path="/hip/login" element={<HipLogin/>} />
         <Route path="/hip/register" element={<HipRegister/>} />
+        <Route path="/abha-generator" element={<ABHAGenerator/>} />
+        <Route path="/doctors-list" element={<DoctorsList/>} />
+        <Route path="/patients-list" element={<PatientStatusList/>} />
+        <Route path="/user-login" element={<UserLogin/>} />
+        <Route path='/add-staff' element={<AddStaff/>} />
       </Routes>
     </Router>
   );

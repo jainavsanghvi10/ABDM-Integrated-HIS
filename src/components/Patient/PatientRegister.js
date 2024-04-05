@@ -8,10 +8,10 @@ const PatientRegister = () => {
             <div className="container d-flex flex-column align-items-center p-5">
                 <h3 className="fw-bold font-blue mb-5">Register</h3>
                 {/* <label for="exampleFormControlInput1" class="form-label">Enter Mobile Number</label> */}
-                <input type="text" className="my-3 p-3 border-2 fw-bold" style={{ width: '500px' }} id="patient-name" placeholder="Full Name">
+                <input type="text" className="my-3 p-3 border border-2 fw-bold" style={{ width: '500px' }} id="patient-name" placeholder="Full Name">
                 </input>
 
-                <input type="text" className="my-3 p-3 border-2 fw-bold" style={{ width: '500px' }} id="patient-email" placeholder="Email Address">
+                <input type="text" className="my-3 p-3 border border-2 fw-bold" style={{ width: '500px' }} id="patient-email" placeholder="Email Address">
                 </input>
 
 
@@ -25,15 +25,15 @@ const PatientRegister = () => {
                         <option value="3">Others</option>
                     </select>
 
-                    <input type="date" className="my-3 p-3 border-2 fw-bold" style={{ width: '250px' }} id="patient-dob">
+                    <input type="date" className="my-3 p-3 border border-2 fw-bold" style={{ width: '250px' }} id="patient-dob">
                     </input>
 
                 </div>
 
-                <input type="text" className="my-3 p-3 b  fw-bold" style={{ width: '500px' }} id="patient-dob" placeholder="Address">
+                <input type="text" className="my-3 p-3 border border-2  fw-bold" style={{ width: '500px' }} id="patient-dob" placeholder="ABHA Address">
                 </input>
 
-                <div className='d-flex'>
+                {/* <div className='d-flex'>
                     <select class="form-select my-3 p-3 border-2 fw-bold" style={{ width: '166px' }} aria-label="Default select example">
                         <option selected>State</option>
                     </select>
@@ -42,9 +42,9 @@ const PatientRegister = () => {
                         <option selected>District</option>
                     </select>
 
-                    <input type="number" className="my-3 p-3 border-2 fw-bold" style={{ width: '166px' }} id="patient-zip" placeholder='Zip Code'>
+                    <input type="number" className="my-3 p-3 border border-2 fw-bold" style={{ width: '166px' }} id="patient-zip" placeholder='Zip Code'>
                     </input>
-                </div>
+                </div> */}
                 <Button variant="contained" style={{ backgroundColor: 'rgb(2,48,106)' }} className='my-3 fw-bold p-3 px-5 text-capitalize rounded-4'>Submit</Button>
 
                 {/* <div className='mt-4 d-flex flex-column align-items-center'>

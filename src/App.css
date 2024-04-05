@@ -25,3 +25,7 @@ hr {
 .bg-trans-blue{
   background: rgba(2, 49, 106, 0.197);
 }
+
+td, th{
+  font-size: small;
+}
