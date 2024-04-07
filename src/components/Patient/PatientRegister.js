@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 
 const PatientRegister = () => {
     return (
-        <>
+        // <>
             <div className="container d-flex flex-column align-items-center p-5">
                 <h3 className="fw-bold font-blue mb-5">Register</h3>
                 {/* <label for="exampleFormControlInput1" class="form-label">Enter Mobile Number</label> */}
@@ -66,7 +66,7 @@ const PatientRegister = () => {
                 </div> */}
 
             </div>
-        </>
+        // </>
     )
 }
 

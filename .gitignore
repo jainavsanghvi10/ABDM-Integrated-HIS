@@ -8,6 +8,8 @@
 # testing
 /coverage
 
+cred.txt
+
 # production
 /build
 
