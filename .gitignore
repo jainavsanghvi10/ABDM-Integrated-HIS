@@ -9,9 +9,12 @@
 /node_modules
 /.pnp
 .pnp.js
+/.vscode
 
 # testing
 /coverage
+
+cred.txt
 
 # production
 /build
