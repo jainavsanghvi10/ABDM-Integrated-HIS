@@ -15,6 +15,7 @@ import DoctorsList from './components/DoctorsList';
 import PatientStatusList from './components/PatientStatusList'
 import UserLogin from './components/UserLogin';
 import AddStaff from './components/AddStaff';
+import DoctorAppointment from './components/DoctorAppointment';
 
 function App() {
   return (
@@ -34,6 +35,8 @@ function App() {
         <Route path="/patients-list" element={<PatientStatusList/>} />
         <Route path="/user-login" element={<UserLogin/>} />
         <Route path='/add-staff' element={<AddStaff/>} />
+
+        <Route path='/doctor-appointment' element={<DoctorAppointment/>} />
       </Routes>
     </Router>
   );
