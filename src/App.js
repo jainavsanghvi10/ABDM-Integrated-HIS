@@ -1,6 +1,6 @@
 import './App.css';
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { BrowserRouter as Router } from "react-router-dom";
 import PatientLogin from './components/Patient/PatientLogin'
 import PatientRegister from './components/Patient/PatientRegister'
@@ -24,6 +24,8 @@ function App() {
     <Router>
       {/* <Navbar/> */}
       <Routes>
+        <Route path="/" element={<Navigate to="/abha-generator" replace={true} />} />
+
         <Route path="/patient/login" element={<PatientLogin />} />
         <Route path="/patient/register" element={<PatientRegister />} />
         <Route path="/patient/profile" element={<PatientProfile />} />
@@ -32,7 +34,6 @@ function App() {
         <Route path="/hpr/register" element={<HprRegister/>} />
         <Route path="/hip/login" element={<HipLogin/>} />
         <Route path="/hip/register" element={<HipRegister/>} />
-        <Route path="/abha-generator" element={<ABHAGenerator/>} />
         <Route path="/patients-list" element={<PatientStatusList/>} />
         <Route path="/user-login" element={<UserLogin/>} />
         <Route path='/add-staff' element={<AddStaff/>} />
@@ -41,6 +42,8 @@ function App() {
         <Route path='/doctor-appointment' element={<DoctorAppointment/>} />
         <Route path='/pick-slot' element={<PickSlot/>}/>
         <Route path='/staff-admin' element={<StaffAdmin/>}/>
+
+        <Route path="/abha-generator" element={<ABHAGenerator/>} />
       </Routes>
     </Router>
   );
