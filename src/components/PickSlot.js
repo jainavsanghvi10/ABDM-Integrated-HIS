@@ -123,8 +123,8 @@ const PickSlot = () => {
                                 />
                             </LocalizationProvider>
                             <div className='d-flex flex-column'>
-                                <Button className='mt-4' variant='contained' style={{ backgroundColor: 'black' }} startIcon={<EventAvailableIcon />}>Book Slot</Button>
-                                <Button className='mt-2' variant='outlined' style={{ color: 'black', borderColor: 'black' }} startIcon={<ArrowBackIcon />}>Go Back</Button>
+                                <Button className='mt-4' variant='contained' style={{ backgroundColor: 'black', fontSize:'small', textTransform:'capitalize' }} startIcon={<EventAvailableIcon />}>Book Slot</Button>
+                                <Button className='mt-2' variant='outlined' style={{ color: 'black', borderColor: 'black', fontSize:'small', textTransform:'capitalize' }} startIcon={<ArrowBackIcon />}>Go Back</Button>
                             </div>
                         </div>
                     </div>
