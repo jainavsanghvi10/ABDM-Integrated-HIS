@@ -17,30 +17,38 @@ import PatientNavbar from './Patient/PatientNavbar';
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 
-const DoctorsList = () => {
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
+import dayjs from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+
+import { DigitalClock } from '@mui/x-date-pickers/DigitalClock';
+
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
+const shouldDisableTime = (value, view) => {
+    const hour = value.hour();
+    if (view === 'hours') {
+      return hour < 9 || hour > 13;
+    }
+    if (view === 'minutes') {
+      const minute = value.minute();
+      return minute > 20 && hour === 13;
+    }
+    return false;
+  };
+
+  
+
+const PickSlot = () => {
+
+    const [date, setDate] = React.useState(dayjs('2022-04-17'));
 
     return (
         <>
             <PatientNavbar />
-            <div className='input-group w-50 mx-auto mt-4'>
-                <input
-                    type='text'
-                    className='form-control p-3'
-                    placeholder='Enter Doctor Name'
-                    aria-label="Recipient's username"
-                    aria-describedby='button-addon2'
-                />
-                <button
-                    className='btn btn-secondary fw-bold p-3'
-                    type='button'
-                    style={{ backgroundColor: '#4C4DDC' }}
-                >
-                    <SearchIcon className='mx-2' />
-                    Search
-                </button>
-            </div>
             <div className="container py-3 d-flex flex-wrap">
-                <Card className='shadow-lg m-3' style={{ background: 'rgb(255,229,229' }} sx={{ maxWidth: 345 }}>
+                <Card className='shadow my-3 border' style={{ background: 'rgb(255,229,229' }} sx={{ maxWidth: 345 }}>
                     <CardMedia
                         component="img"
                         alt="green iguana"
@@ -85,14 +93,42 @@ const DoctorsList = () => {
                                 </div>
                             </div>
                         </div>
-                        <Button className='d-block w-100' variant='contained' style={{ textTransform: 'capitalize', backgroundColor: '#4C4DDC' }}>
+                        {/* <Button className='d-block w-100' variant='contained' style={{ textTransform: 'capitalize', backgroundColor: '#4C4DDC' }}>
                             Book Appointment
-                        </Button>
+                        </Button> */}
+                        <p className='fw-bold m-0' style={{ fontSize: 'small' }}>About Me</p>
+                        <p className='text-secondary' style={{ fontSize: 'x-small' }}>Dr. Carly Angel is the top most immunologists specialist in Crist Hospital in London, UK. She achived several awards for her wonderful contribution
+                            Read More. . . </p>
                     </CardContent>
                 </Card>
+
+                <div className='py-3 my-3 mx-4 px-5 rounded shadow border' style={{ backgroundColor: 'rgb(76 77 220 / 10%)' }}>
+                    <p className='fw-bold'>Book Appointment</p>
+                    <div className='d-flex'>
+                        <div className='me-5'>
+                            <p className='fw-bold' style={{ fontSize: 'x-small' }}>Select Date</p>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateCalendar className='shadow-sm mx-0 rounded' value={date} onChange={(newDate) => setDate(newDate)} />
+                            </LocalizationProvider>
+                        </div>
+                        <div>
+                            <p className='fw-bold' style={{ fontSize: 'x-small' }}>Select Hour</p>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DigitalClock
+                                    skipDisabled
+                                    minTime={dayjs('2022-04-17T09:00')}
+                                    timeStep={60}
+                                    className='shadow-sm border rounded px-4'
+                                />
+                            </LocalizationProvider>
+                            <Button className='mt-4 w-100' variant='contained' style={{backgroundColor:'black'}}>Book Slot</Button>
+                            <Button className='mt-2 w-100' variant='outlined'  style={{color:'black', borderColor:'black'}} startIcon={<ArrowBackIcon />}>Go Back</Button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </>
     );
 }
 
-export default DoctorsList;
+export default PickSlot;

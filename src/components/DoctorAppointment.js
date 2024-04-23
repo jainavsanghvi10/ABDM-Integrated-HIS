@@ -164,7 +164,7 @@ const DoctorAppointment = () => {
                             <p className='text-secondary fw-bold'>Purpose:</p>
                             <p style={{ fontSize: 'small' }} className='text-secondary'>
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                malesuada lacus ex, sit amet blandit leo lobortis eget.``
+                                malesuada lacus ex, sit amet blandit leo lobortis eget.`1`
 
                             </p>
                             {/* <input class="form-control" type="file" id="formFile"></input> */}

@@ -16,6 +16,7 @@ import PatientStatusList from './components/PatientStatusList'
 import UserLogin from './components/UserLogin';
 import AddStaff from './components/AddStaff';
 import DoctorAppointment from './components/DoctorAppointment';
+import PickSlot from './components/PickSlot';
 
 function App() {
   return (
@@ -31,12 +32,13 @@ function App() {
         <Route path="/hip/login" element={<HipLogin/>} />
         <Route path="/hip/register" element={<HipRegister/>} />
         <Route path="/abha-generator" element={<ABHAGenerator/>} />
-        <Route path="/doctors-list" element={<DoctorsList/>} />
         <Route path="/patients-list" element={<PatientStatusList/>} />
         <Route path="/user-login" element={<UserLogin/>} />
         <Route path='/add-staff' element={<AddStaff/>} />
 
+        <Route path="/doctors-list" element={<DoctorsList/>} />
         <Route path='/doctor-appointment' element={<DoctorAppointment/>} />
+        <Route path='/pick-slot' element={<PickSlot/>}/>
       </Routes>
     </Router>
   );
