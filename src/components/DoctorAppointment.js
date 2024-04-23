@@ -31,6 +31,11 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import PendingOutlinedIcon from '@mui/icons-material/PendingOutlined';
+import AccessibleOutlinedIcon from '@mui/icons-material/AccessibleOutlined';
+import VerifiedIcon from '@mui/icons-material/Verified';
+
+import Rating from '@mui/material/Rating';
 
 import Button from '@mui/material/Button';
 
@@ -40,6 +45,8 @@ const DoctorAppointment = () => {
     const handleChange = (event) => {
         setChecked(event.target.checked);
     };
+
+    const [rating, setRating] = React.useState(2);
 
     return (
         <div className="container py-5 d-flex">
@@ -116,20 +123,48 @@ const DoctorAppointment = () => {
             </div>
 
             <div className='w-50 py-3'>
-                <h5 className='fw-bold mb-4'>Scheduled Appointments</h5>
+                <div className='mb-4'>
+                    <span className='fw-bold text-secondary'>Welcome, </span>
+                    <span className='fw-bold font-purple'> Dr. Robert Harry</span>
+                </div>
+
+                <div className='d-flex'>
+                    <div className='w- me-5'>
+                        <div className='d-flex'>
+                            <AccessibleOutlinedIcon className='font-purple' fontSize='large'/>
+                            <div className='ms-3 font-grey'>
+                                <p className='mb-0 fw-bold' style={{ fontSize: 'small' }}>3000</p>
+                                <p style={{ fontSize: 'x-small' }}>Patients Treated</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className='w-25'>
+                        <div className='d-flex'>
+                            {/* <AccessibleOutlinedIcon className='font-purple' fontSize='large'/> */}
+                            <VerifiedIcon className='font-purple' fontSize='large'/>
+                            
+                            <div className='ms-3 font-grey'>
+                                <p className='mb-0 fw-bold' style={{ fontSize: 'small' }}>Ratings</p>
+                                {/* <p style={{ fontSize: 'x-small' }}>Patients Treated</p> */}
+                                <Rating name="read-only" value={rating} size='small' readOnly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p className='my-4 fw-bold'>Scheduled Appointments</p>
 
                 <div className=''>
-                    <div className='row justify-content-start text-start ps-3'>
+                    <div className='row align-items-center w-100'>
                         <div className='col-3'>
-                            <span className='text-secondary' style={{ fontSize: 'small' }}>Time Slot</span>
+                            <span className='ms-4 text-secondary' style={{ fontSize: 'small' }}>Time Slot</span>
                         </div>
-                        <div className='px-2 col-3 ms-3'>
-                            <span className='text-secondary' style={{ fontSize: 'small' }}>Patient Name</span>
+                        <div className='px-2 col-5'>
+                            <span className='ms-2 text-secondary' style={{ fontSize: 'small' }}>Patient Name</span>
                         </div>
-                        <div className='col-1 ms-3'>
-                            <span className='text-secondary' style={{ fontSize: 'small' }}>Status</span>
-                        </div>
-                        <div className='col-2'>
+                        <div className='col-2 d-flex'>
+                            <span className='ms-2 text-secondary' style={{ fontSize: 'small' }}>Status</span>
                         </div>
                     </div>
                 </div>
@@ -141,22 +176,16 @@ const DoctorAppointment = () => {
                             aria-controls="panel2-content"
                             id="panel2-header"
                         >
-                            <div className='row align-items-center'>
-                                <div className='col-4'>
-                                    <span className='mx-2 text-primary' style={{ fontSize: 'small' }}>17:00 - 17:30</span>
+                            <div className='row align-items-center w-100'>
+                                <div className='col-3'>
+                                    <span className='mx-2 font-blue' style={{ fontSize: 'small' }}>17:00 - 17:30</span>
                                 </div>
-                                {/* <Avatar sx={{ width: 24, height: 24 }}/> */}
                                 <div className='px-2 col-5'>
-                                    <span className='ms-2 fw-bold text-primary' style={{ fontSize: 'small' }}>Dr. Dhinchak Pooja</span>
+                                    <span className='ms-2 fw-bold font-blue' style={{ fontSize: 'small' }}>Dhinchak Pooja</span>
                                 </div>
-                                <div className='col-1'>
-                                    <HighlightOffIcon className='px-0' fontSize='small' />
-                                </div>
-                                <div className='col-1'>
-                                    <Fab variant="extended" size="small" color='primary'>
-                                        <UploadIcon className='ms-1' sx={{ mr: 1 }} fontSize='small' />
-                                        <span className='fw-bold me-2' style={{ fontSize: '11px', textTransform: 'capitalize' }}>Upload</span>
-                                    </Fab>
+                                <div className='col-2 d-flex'>
+                                    <PendingOutlinedIcon className='px-0 font-grey' fontSize='small' />
+                                    <span className='ms-2 font-grey fw-bold' style={{ fontSize: 'small' }}>Pending</span>
                                 </div>
                             </div>
                         </AccordionSummary>
@@ -168,11 +197,11 @@ const DoctorAppointment = () => {
 
                             </p>
                             {/* <input class="form-control" type="file" id="formFile"></input> */}
-                            <Fab className='me-4' variant="extended" size="small" color='primary'>
+                            <Fab className='me-4 rounded' variant="extended" size="small" color='primary'>
                                 <UploadIcon className='ms-1' sx={{ mr: 1 }} fontSize='small' />
                                 <span className='fw-bold me-2' style={{ fontSize: '11px', textTransform: 'capitalize' }}>Upload</span>
                             </Fab>
-                            <Button variant="outlined" color='secondary' size='small' style={{ textTransform: 'capitalize' }}>Appointment Completed</Button>
+                            <Button variant="outlined" color='secondary' size='small' style={{ textTransform: 'capitalize', color: 'black', borderColor: 'black' }}>Appointment Completed</Button>
                         </AccordionDetails>
                     </Accordion>
 
@@ -182,21 +211,16 @@ const DoctorAppointment = () => {
                             aria-controls="panel2-content"
                             id="panel2-header"
                         >
-                            <div className='row align-items-center'>
-                                <div className='col-4'>
-                                    <span className='mx-2 text-primary' style={{ fontSize: 'small' }}>17:00 - 17:30</span>
+                            <div className='row align-items-center w-100'>
+                                <div className='col-3'>
+                                    <span className='mx-2 font-blue' style={{ fontSize: 'small' }}>17:00 - 17:30</span>
                                 </div>
                                 <div className='px-2 col-5'>
-                                    <span className='ms-2 fw-bold text-primary' style={{ fontSize: 'small' }}>Dr. Dhinchak Pooja</span>
+                                    <span className='ms-2 fw-bold font-blue' style={{ fontSize: 'small' }}>Dhinchak Pooja</span>
                                 </div>
-                                <div className='col-1'>
-                                    <DoneAllIcon className='px-0' fontSize='small' />
-                                </div>
-                                <div className='col-1'>
-                                    <Fab variant="extended" size="small" color='primary'>
-                                        <UploadIcon className='ms-1' sx={{ mr: 1 }} fontSize='small' />
-                                        <span className='fw-bold me-2' style={{ fontSize: '11px', textTransform: 'capitalize' }}>Upload</span>
-                                    </Fab>
+                                <div className='col-2 d-flex'>
+                                    <DoneAllIcon className='px-0 font-green' fontSize='small' />
+                                    <span className='ms-2 font-green fw-bold' style={{ fontSize: 'small' }}>Completed</span>
                                 </div>
                             </div>
                         </AccordionSummary>
@@ -206,7 +230,11 @@ const DoctorAppointment = () => {
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
                                 malesuada lacus ex, sit amet blandit leo lobortis eget.
                             </p>
-                            <Button variant="contained" size='small' style={{ textTransform: 'capitalize' }}>Appointment Completed</Button>
+                            <Fab className='me-4 rounded' variant="extended" size="small" color='primary'>
+                                <UploadIcon className='ms-1' sx={{ mr: 1 }} fontSize='small' />
+                                <span className='fw-bold me-2' style={{ fontSize: '11px', textTransform: 'capitalize' }}>Upload</span>
+                            </Fab>
+                            <Button variant="outlined" color='secondary' size='small' style={{ textTransform: 'capitalize', color: 'black', borderColor: 'black' }}>Appointment Completed</Button>
                         </AccordionDetails>
                     </Accordion>
 

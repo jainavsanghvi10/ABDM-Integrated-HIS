@@ -12,10 +12,13 @@ import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
 import Skeleton from '@mui/material/Skeleton';
+import docsignupimg from '../assets/images/Group 160.png'
+import aadhaarImg from '../assets/images/aadhaar.svg'
+import signupBackground from '../assets/images/signupBackground.png'
 
 const Generator = () => {
 	const [step, setStep] = useState(1);
-    const navigate = useNavigate();
+	const navigate = useNavigate();
 	const [formData, setFormData] = useState({});
 	const [aadhaarNumber, setaadhaarNumber] = useState(undefined);
 	const [mobileNumber, setMobileNumber] = useState(undefined);
@@ -23,9 +26,9 @@ const Generator = () => {
 	const [txnId, setTxnId] = useState('');
 	const [healthIdNumber, setHealthIdNumber] = useState('');
 	// const [publicKey, setPublicKey] = useState('');
-    const [otpDialogState, setOtpDialogState] = useState(false);
-	
-    // useEffect(() => {
+	const [otpDialogState, setOtpDialogState] = useState(false);
+
+	// useEffect(() => {
 	// const fetchPublicKey = async () => {
 	//     try {
 	//         const response = await axios.post('http://localhost:8087/abhaGenerator/publicKey');
@@ -66,7 +69,7 @@ const Generator = () => {
 				'http://localhost:8087/abhaGenerator/generateOTP',
 				data
 			);
-            setOtpDialogState(true);
+			setOtpDialogState(true);
 			const txnId = response.data;
 			setTxnId(txnId);
 			console.log('Transaction ID:', txnId);
@@ -87,14 +90,14 @@ const Generator = () => {
 			.post('http://localhost:8087/abhaGenerator/generateMobileOTP', data)
 			.then((response) => {
 				response = response.data;
-                const txnId = response.txnId;
+				const txnId = response.txnId;
 				// setTxnId(txnId);
 				console.log('Transaction ID:', txnId);
-                if(!response.mobileLinked){
-                    setOtpDialogState(true);
-                }else{
-                    alert('Mobile Number already linked');
-                }
+				if (!response.mobileLinked) {
+					setOtpDialogState(true);
+				} else {
+					alert('Mobile Number already linked');
+				}
 			})
 			.catch((error) => {
 				alert('Invalid');
@@ -113,7 +116,7 @@ const Generator = () => {
 				const healthId = response.data;
 				setHealthIdNumber(healthId);
 				console.log('Health ID Number:', healthId);
-                alert('Your Health ID / ABHA Number is ', healthId);
+				alert('Your Health ID / ABHA Number is ', healthId);
 			})
 			.catch((error) => {
 				alert('Invalid');
@@ -130,20 +133,20 @@ const Generator = () => {
 				txnId: txnId,
 			};
 			// POST request to the server API
-			if(otpDialogState){
-            axios
-				.post('http://localhost:8087/abhaGenerator/verifyOTP', data)
-				.then((response) => {
-					const txnId = response.data;
-					// setTxnId(txnId);
-					console.log('Transaction ID:', txnId);
-                })
-				.catch((error) => {
-					alert('Invalid OTP');
-				});
-            }
-            setOtpDialogState(false);
-            setStep(step + 1);
+			if (otpDialogState) {
+				axios
+					.post('http://localhost:8087/abhaGenerator/verifyOTP', data)
+					.then((response) => {
+						const txnId = response.data;
+						// setTxnId(txnId);
+						console.log('Transaction ID:', txnId);
+					})
+					.catch((error) => {
+						alert('Invalid OTP');
+					});
+			}
+			setOtpDialogState(false);
+			setStep(step + 1);
 		} else {
 			console.log(mobileNumber);
 			let encryptedOTP = encrypt(otp);
@@ -152,26 +155,26 @@ const Generator = () => {
 				txnId: txnId,
 			};
 			// POST request to the server API
-			if(otpDialogState){
-                axios
-                    .post('http://localhost:8087/abhaGenerator/verifyMobileOTP', data)
-                    .then((response) => {
-                        const txnId = response.data;
-                        // setTxnId(txnId);
-                        console.log('Transaction ID:', txnId)
-                    })
-                    .catch((error) => {
-                        alert('Invalid OTP');
-                    });
-            }
-            setOtpDialogState(false);
-            setStep(step + 1);
+			if (otpDialogState) {
+				axios
+					.post('http://localhost:8087/abhaGenerator/verifyMobileOTP', data)
+					.then((response) => {
+						const txnId = response.data;
+						// setTxnId(txnId);
+						console.log('Transaction ID:', txnId)
+					})
+					.catch((error) => {
+						alert('Invalid OTP');
+					});
+			}
+			setOtpDialogState(false);
+			setStep(step + 1);
 		}
 	};
 
 	const handlePrevious = () => {
 		setStep(step - 1);
-        setOtpDialogState(false);
+		setOtpDialogState(false);
 	};
 
 	const handleInputChange = (event) => {
@@ -181,199 +184,205 @@ const Generator = () => {
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-        navigate("/patient/register")
+		navigate("/patient/register")
 	};
 
 	return (
-		<Form onClick={handleSubmit} className='container p-5'>
-			<ProgressBar striped animated variant='success' now={(step / 3) * 100} />
-			{step === 1 && (
-				<Form.Group controlId='formStep1'>
-					<div className='p-5 d-flex flex-column align-items-center '>
-						<h3 className='fw-bold font-blue mb-5'>Link Adhaar Number</h3>
-						{/* <label for="exampleFormControlInput1" class="form-label">Enter Mobile Number</label> */}
-						<input
-							type='tel'
-							className='form-control py-3 border-2 fw-bold'
-							style={{ width: '500px' }}
-							id='mobile-number'
-							placeholder='Enter Adhaar Number'
-							size='10'
-							value={aadhaarNumber}
-							onChange={(e) => setaadhaarNumber(e.target.value)}></input>
-
-						<Button
-							variant='outlined'
-							style={{ color: 'rgb(2,48,106)' }}
-							className='my-3 fw-bold text-capitalize'
-							onClick={handleAadhaarOTP}>
-							Send OTP
-						</Button>
-                        {otpDialogState ? (
-							<>
-						<p className='text-muted mt-4 fw-bold'>Enter OTP</p>
-
-						<div className='w-50'>
-							<OtpInput
-								value={otp}
-								onChange={setOtp}
-								numInputs={6}
-								// renderSeparator={<span>-</span>}
-								renderInput={(props) => <input {...props} />}
-								inputStyle='m-2 fw-bold text-muted fs-3 w-100 border-1 rounded'
-								containerStyle='mx-5'
-								// inputType='tel'
-							/>
-						</div>
-                        </>
-                        ) : null}
-
-						{/* <Button variant="contained" style={{ backgroundColor: 'rgb(2,48,106)' }} className='my-3 fw-bold p-3 px-5 text-capitalize rounded-4'>Sign Up</Button> */}
+		<>
+			<div className='py-5 bg-signup'>
+				<div className='d-flex w-75 mx-auto border shadow-lg rounded rounded-4' style={{background:'rgb(255, 229, 229)'}}>
+					<div className='w-50 d-flex align-items-center justify-content-center rounded-start-4 border-end border-3'>
+						<img className='w-100' src={docsignupimg} />
 					</div>
-				</Form.Group>
-			)}
-			{step === 2 && (
-				<Form.Group controlId='formStep2'>
-					<div className='p-5 d-flex flex-column align-items-center '>
-						<h3 className='fw-bold font-blue mb-5'>Link Mobile Number</h3>
-						{/* <label for="exampleFormControlInput1" class="form-label">Enter Mobile Number</label> */}
-						<input
-							type='tel'
-							className='form-control py-3 border-2 fw-bold'
-							style={{ width: '500px' }}
-							id='mobile-number'
-							placeholder='Enter Mobile Number'
-							size='10'
-							value={mobileNumber}
-							onChange={(e) => setMobileNumber(e.target.value)}></input>
+					<Form onClick={handleSubmit} className='container p-5 w-50'>
+						<ProgressBar striped animated variant='success' style={{color:'rgb(255, 229, 229)'}} now={(step / 3) * 100} />
+						{step === 1 && (
+							<Form.Group controlId='formStep1'>
+								<div className='p-5 d-flex flex-column align-items-center'>
+									<p className='fw-bold text-dark mb-5'>Link Adhaar Number</p>
+									<input
+										type='tel'
+										className='form-control py-3 border-2 fw-bold'
+										style={{ width: '400px', fontSize:'small'}}
+										id='mobile-number'
+										placeholder='Enter Adhaar Number'
+										size='10'
+										value={aadhaarNumber}
+										onChange={(e) => setaadhaarNumber(e.target.value)}></input>
 
-						<Button
-							variant='outlined'
-							style={{ color: 'rgb(2,48,106)' }}
-							className='my-3 fw-bold text-capitalize'
-							onClick={handleMobileOTP}>
-							Send OTP
-						</Button>
-
-						{otpDialogState ? (
-							<>
-								<p className='text-muted mt-4 fw-bold'>Enter OTP</p>
-								<div className='w-50'>
-									<OtpInput
-										value={otp}
-										onChange={setOtp}
-										numInputs={6}
-										// renderSeparator={<span>-</span>}
-										renderInput={(props) => <input {...props} />}
-										inputStyle='m-2 fw-bold text-muted fs-3 w-100 border-1 rounded'
-										containerStyle='mx-5'
-										// inputType='tel'
-									/>
-								</div>
-							</>
-						) : null}
-
-						{/* <Button variant="contained" style={{ backgroundColor: 'rgb(2,48,106)' }} className='my-3 fw-bold p-3 px-5 text-capitalize rounded-4'>Sign Up</Button> */}
-					</div>
-				</Form.Group>
-			)}
-			{step === 3 && (
-				<Form.Group controlId='formStep3'>
-					<div className='w-100 p-5 text-center'>
-						<h3 className='fw-bold font-blue mb-5'>Generate ABHA Number</h3>
-						<Box
-							sx={{
-								display: 'flex',
-								flexWrap: 'wrap',
-								justifyContent: 'center',
-								'& > :not(style)': {
-									m: 1,
-									width: 400,
-									height: 600,
-								},
-							}}>
-							<Paper elevation={3}>
-								<div className='h-25 bg-blue mb-5'>
-									<Avatar
-										className='border'
-										style={{
-											background: 'rgb(2,48,106)',
-											left: '125px',
-											top: '80px',
-											height: '150px',
-											width: '150px',
-										}}
-										alt='Remy Sharp'
-										src=''
-									/>
-								</div>
-								<div
-									className='d-flex flex-column align-items-center justify-content-center'
-									style={{ marginTop: '100px' }}>
-									<QrCode2Icon style={{ height: '100px', width: '100px' }} />
-									<Skeleton
-										className='mt-3 rounded'
-										animation='wave'
-										variant='rectangular'
-										width={300}
-										height={20}
-									/>
-									<Skeleton
-										className='mt-3 rounded'
-										animation='wave'
-										variant='rectangular'
-										width={300}
-										height={20}
-									/>
-									<Skeleton
-										className='mt-3 rounded'
-										animation='wave'
-										variant='rectangular'
-										width={300}
-										height={20}
-									/>
 									<Button
-										variant='contained'
-										style={{ backgroundColor: 'rgb(2,48,106)' }}
-										className='my-5 fw-bold p-3 px-5 text-capitalize rounded-4'
-										onClick={handleAbhaGeneration}>
-										Generate ABHA Number
+										variant='outlined'
+										style={{ color: '#4200FF' , borderColor:'#4200FF', fontSize:'small'}}
+										className='my-3 fw-bold text-capitalize'
+										onClick={handleAadhaarOTP}>
+										Send OTP
 									</Button>
+									{otpDialogState ? (
+										<>
+											<p className='text-muted mt-4 fw-bold'>Enter OTP</p>
+
+											<div className='w-50'>
+												<OtpInput
+													value={otp}
+													onChange={setOtp}
+													numInputs={6}
+													renderInput={(props) => <input {...props} />}
+													inputStyle='m-2 fw-bold text-muted fs-3 w-100 border-1 rounded'
+													containerStyle='mx-5'
+												/>
+											</div>
+										</>
+									) : null}
+
+									{/* <Button variant="contained" style={{ backgroundColor: '#4200FF' }} className='my-3 fw-bold p-3 px-5 text-capitalize rounded-4'>Sign Up</Button> */}
 								</div>
-							</Paper>
-						</Box>
-					</div>
-				</Form.Group>
-			)}
-			<div className='d-flex justify-content-around'>
-				{step > 1 && (
-					<Button
-						variant='outlined'
-						style={{ color: 'rgb(2,48,106)' }}
-						className='my-3 fw-bold text-capitalize'
-						onClick={handlePrevious}>
-						Previous
-					</Button>
-				)}
-				{step < 3 ? (
-					<Button
-						variant='contained'
-						style={{ backgroundColor: 'rgb(2,48,106)' }}
-						className='my-3 fw-bold p-3 px-5 text-capitalize'
-						onClick={handleNext}>
-						Next
-					</Button>
-				) : (
-					<Button
-						variant='contained'
-						style={{ backgroundColor: 'rgb(2,48,106)' }}
-						className='my-3 fw-bold p-3 px-5 text-capitalize'
-						type='submit'>
-						Submit
-					</Button>
-				)}
+							</Form.Group>
+						)}
+						{step === 2 && (
+							<Form.Group controlId='formStep2'>
+								<div className='p-5 d-flex flex-column align-items-center '>
+									<p className='fw-bold text-dark mb-5'>Link Mobile Number</p>
+									{/* <label for="exampleFormControlInput1" class="form-label">Enter Mobile Number</label> */}
+									<input
+										type='tel'
+										className='form-control py-3 border-2 fw-bold'
+										style={{ width: '400px', fontSize:'small' }}
+										id='mobile-number'
+										placeholder='Enter Mobile Number'
+										size='10'
+										value={mobileNumber}
+										onChange={(e) => setMobileNumber(e.target.value)}></input>
+
+									<Button
+										variant='outlined'
+										style={{ color: '#4200FF' }}
+										className='my-3 fw-bold text-capitalize'
+										onClick={handleMobileOTP}>
+										Send OTP
+									</Button>
+
+									{otpDialogState ? (
+										<>
+											<p className='text-muted mt-4 fw-bold'>Enter OTP</p>
+											<div className='w-50'>
+												<OtpInput
+													value={otp}
+													onChange={setOtp}
+													numInputs={6}
+													// renderSeparator={<span>-</span>}
+													renderInput={(props) => <input {...props} />}
+													inputStyle='m-2 fw-bold text-muted fs-3 w-100 border-1 rounded'
+													containerStyle='mx-5'
+												// inputType='tel'
+												/>
+											</div>
+										</>
+									) : null}
+
+									{/* <Button variant="contained" style={{ backgroundColor: '#4200FF' }} className='my-3 fw-bold p-3 px-5 text-capitalize rounded-4'>Sign Up</Button> */}
+								</div>
+							</Form.Group>
+						)}
+						{step === 3 && (
+							<Form.Group controlId='formStep3'>
+								<div className='w-100 px-5 mt-4 text-center'>
+									{/* <p className='fw-bold font-purple mb-2'>Generate ABHA Number</p> */}
+									<Box
+										sx={{
+											display: 'flex',
+											flexWrap: 'wrap',
+											justifyContent: 'center',
+											'& > :not(style)': {
+												m: 1,
+												width: 400,
+												height: 330,
+											},
+										}}>
+										<Paper elevation={3}>
+											<div className='bg-blue mb-4' style={{ height: '100px' }}>
+												<Avatar
+													className='border'
+													style={{
+														background: 'rgb(2,48,106)',
+														left: '95px',
+														top: '50px',
+														height: '80px',
+														width: '80px',
+													}}
+													alt='Remy Sharp'
+													src=''
+												/>
+											</div>
+											<div
+												className='d-flex pt-3 flex-column align-items-center justify-content-center'
+												style={{}}>
+												<QrCode2Icon style={{ height: '60px', width: '60px' }} />
+												<Skeleton
+													className='mt-2 rounded'
+													animation='wave'
+													variant='rectangular'
+													width={200}
+													height={10}
+												/>
+												<Skeleton
+													className='mt-2 rounded'
+													animation='wave'
+													variant='rectangular'
+													width={200}
+													height={10}
+												/>
+												<Skeleton
+													className='mt-2 rounded'
+													animation='wave'
+													variant='rectangular'
+													width={200}
+													height={10}
+												/>
+												<Button
+													variant='outlined'
+													style={{ color: '#4200FF', borderColor: '#4200FF', fontSize: 'x-small' }}
+													className='mt-3 fw-bold px-3 py-2 text-capitalize rounded-2'
+													onClick={handleAbhaGeneration}>
+													Generate ABHA Number
+												</Button>
+											</div>
+										</Paper>
+									</Box>
+								</div>
+							</Form.Group>
+						)}
+						<div className='d-flex justify-content-around'>
+							{step > 1 && (
+								<Button
+									variant='outlined'
+									style={{ color: '#4200FF', borderColor:'#4200FF' }}
+									className='my-3 fw-bold text-capitalize'
+									onClick={handlePrevious}>
+									Previous
+								</Button>
+							)}
+							{step < 3 ? (
+								<Button
+									variant='contained'
+									style={{ backgroundColor: '#4200FF' }}
+									className='my-3 fw-bold p-2 px-5 text-capitalize'
+									onClick={handleNext}>
+									Next
+								</Button>
+							) : (
+								<Button
+									variant='contained'
+									style={{ backgroundColor: '#4200FF' }}
+									className='my-3 fw-bold p-2 px-5 text-capitalize'
+									type='submit'>
+									Submit
+								</Button>
+							)}
+						</div>
+					</Form>
+				</div>
 			</div>
-		</Form>
+		</>
 	);
 };
 

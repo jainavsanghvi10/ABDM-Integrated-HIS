@@ -6,6 +6,16 @@ body, button{
 .font-blue{
   color: rgb(2,48,106);
 }
+.font-purple{
+  color: #4200FF;
+}
+.font-grey{
+  color:#404040;
+}
+.font-green{
+  color:#05CD99;
+}
+
 .border-blue{
   border-color: rgb(2,48,106) !important;
 }
@@ -21,9 +31,21 @@ hr {
 .bg-blue{
   background: rgb(2,48,106);
 }
+.bg-purple{
+  background: rgb(76, 77, 220);
+}
 
 .bg-trans-blue{
   background: rgba(2, 49, 106, 0.197);
+}
+.bg-grey{
+  background: #101418;
+}
+
+.bg-signup{
+  background: rgb(230,226,229);  
+  width: 100%;
+  height: 100vh;
 }
 
 td, th{

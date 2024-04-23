@@ -98,8 +98,8 @@ const PickSlot = () => {
                             Book Appointment
                         </Button> */}
                         <p className='fw-bold m-0' style={{ fontSize: 'small' }}>About Me</p>
-                        <p className='text-secondary' style={{ fontSize: 'x-small' }}>Dr. Carly Angel is the top most immunologists specialist in Crist Hospital in London, UK. She achived several awards for her wonderful contribution
-                            Read More. . . </p>
+                        <span className='text-secondary' style={{ fontSize: 'x-small' }}>Dr. Carly Angel is the top most immunologists specialist in Crist Hospital in London, UK. She achived several awards for her wonderful contribution </span>
+                        <span className='text-primary' style={{ fontSize: 'x-small' }} >Read More. . . </span>
                     </CardContent>
                 </Card>
 
