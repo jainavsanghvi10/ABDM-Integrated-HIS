@@ -25,20 +25,21 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DigitalClock } from '@mui/x-date-pickers/DigitalClock';
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 
 const shouldDisableTime = (value, view) => {
     const hour = value.hour();
     if (view === 'hours') {
-      return hour < 9 || hour > 13;
+        return hour < 9 || hour > 13;
     }
     if (view === 'minutes') {
-      const minute = value.minute();
-      return minute > 20 && hour === 13;
+        const minute = value.minute();
+        return minute > 20 && hour === 13;
     }
     return false;
-  };
+};
 
-  
+
 
 const PickSlot = () => {
 
@@ -121,8 +122,10 @@ const PickSlot = () => {
                                     className='shadow-sm border rounded px-4'
                                 />
                             </LocalizationProvider>
-                            <Button className='mt-4 w-100' variant='contained' style={{backgroundColor:'black'}}>Book Slot</Button>
-                            <Button className='mt-2 w-100' variant='outlined'  style={{color:'black', borderColor:'black'}} startIcon={<ArrowBackIcon />}>Go Back</Button>
+                            <div className='d-flex flex-column'>
+                                <Button className='mt-4' variant='contained' style={{ backgroundColor: 'black' }} startIcon={<EventAvailableIcon />}>Book Slot</Button>
+                                <Button className='mt-2' variant='outlined' style={{ color: 'black', borderColor: 'black' }} startIcon={<ArrowBackIcon />}>Go Back</Button>
+                            </div>
                         </div>
                     </div>
                 </div>
