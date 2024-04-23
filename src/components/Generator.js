@@ -13,8 +13,9 @@ import Avatar from '@mui/material/Avatar';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
 import Skeleton from '@mui/material/Skeleton';
 import docsignupimg from '../assets/images/Group 160.png'
-import aadhaarImg from '../assets/images/aadhaar.svg'
-import signupBackground from '../assets/images/signupBackground.png'
+import aadhaarImg from '../assets/images/online_transaction.svg'
+import aadhaarImg2 from '../assets/images/hire.svg'
+// import signupBackground from '../assets/images/signupBackground.png'
 
 const Generator = () => {
 	const [step, setStep] = useState(1);
@@ -177,8 +178,9 @@ const Generator = () => {
 		<>
 			<div className='py-5 bg-signup'>
 				<div className='d-flex w-75 mx-auto border shadow-lg rounded rounded-4' style={{background:'rgb(255, 229, 229)'}}>
-					<div className='w-50 d-flex align-items-center justify-content-center rounded-start-4 border-end border-3'>
-						<img className='w-100' src={docsignupimg} />
+					<div className='w-50 d-flex flex-column align-items-center justify-content-center rounded-start-4 border-end border-3'>
+						<img className='w-75 my-4' src={aadhaarImg2} />
+						<img className='w-75 my-4' src={aadhaarImg} />
 					</div>
 					<Form className='container p-5 w-50'>
 						<ProgressBar striped animated variant='success' style={{color:'rgb(255, 229, 229)'}} now={(step / 3) * 100} />

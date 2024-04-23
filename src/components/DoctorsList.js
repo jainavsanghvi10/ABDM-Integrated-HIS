@@ -22,22 +22,24 @@ const DoctorsList = () => {
     return (
         <>
             <PatientNavbar />
-            <div className='input-group w-50 mx-auto mt-4'>
-                <input
-                    type='text'
-                    className='form-control p-3'
-                    placeholder='Enter Doctor Name'
-                    aria-label="Recipient's username"
-                    aria-describedby='button-addon2'
-                />
-                <button
-                    className='btn btn-secondary fw-bold p-3'
-                    type='button'
-                    style={{ backgroundColor: '#4C4DDC' }}
-                >
-                    <SearchIcon className='mx-2' />
-                    Search
-                </button>
+            <div>
+                <div className='input-group w-50 mx-auto mt-4'>
+                    <input
+                        type='text'
+                        className='form-control p-3'
+                        placeholder='Enter Doctor Name'
+                        aria-label="Recipient's username"
+                        aria-describedby='button-addon2'
+                    />
+                    <button
+                        className='btn btn-secondary fw-bold p-3'
+                        type='button'
+                        style={{ backgroundColor: '#4C4DDC' }}
+                    >
+                        <SearchIcon className='mx-2' />
+                        Search
+                    </button>
+                </div>
             </div>
             <div className="container py-3 d-flex flex-wrap">
                 <Card className='shadow-lg m-3' style={{ background: 'rgb(255,229,229' }} sx={{ maxWidth: 345 }}>

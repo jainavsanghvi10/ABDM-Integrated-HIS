@@ -17,6 +17,7 @@ import UserLogin from './components/UserLogin';
 import AddStaff from './components/AddStaff';
 import DoctorAppointment from './components/DoctorAppointment';
 import PickSlot from './components/PickSlot';
+import StaffAdmin from './components/StaffAdmin';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
         <Route path="/doctors-list" element={<DoctorsList/>} />
         <Route path='/doctor-appointment' element={<DoctorAppointment/>} />
         <Route path='/pick-slot' element={<PickSlot/>}/>
+        <Route path='/staff-admin' element={<StaffAdmin/>}/>
       </Routes>
     </Router>
   );
