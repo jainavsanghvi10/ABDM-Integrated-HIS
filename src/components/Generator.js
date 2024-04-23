@@ -50,13 +50,10 @@ const Generator = () => {
                             -----END PUBLIC KEY-----`;
 		encryptor.setPublicKey(publicKey);
 		const ciphertext = encryptor.encrypt(plainText);
-		console.log('Plain Text:', plainText);
-		console.log('Encrypted Text:', ciphertext);
 		return ciphertext;
 	};
 
 	const handleAadhaarOTP = async () => {
-		console.log('Aadhaar Number:', aadhaarNumber);
 		try {
 			// Encrypt Aadhaar number
 			let encryptedAadhaarNumber = encrypt(aadhaarNumber);
@@ -72,14 +69,12 @@ const Generator = () => {
 			setOtpDialogState(true);
 			const txnId = response.data;
 			setTxnId(txnId);
-			console.log('Transaction ID:', txnId);
 		} catch (error) {
 			alert('Invalid');
 		}
 	};
 
 	const handleMobileOTP = () => {
-		console.log('Mobile Number:', mobileNumber);
 		const data = {
 			mobile: parseInt(mobileNumber),
 			txnId: txnId,
@@ -92,7 +87,6 @@ const Generator = () => {
 				response = response.data;
 				const txnId = response.txnId;
 				// setTxnId(txnId);
-				console.log('Transaction ID:', txnId);
 				if (!response.mobileLinked) {
 					setOtpDialogState(true);
 				} else {
@@ -115,7 +109,7 @@ const Generator = () => {
 			.then((response) => {
 				const healthId = response.data;
 				setHealthIdNumber(healthId);
-				console.log('Health ID Number:', healthId);
+				// console.log('Health ID Number:', healthId);
 				alert('Your Health ID / ABHA Number is ', healthId);
 			})
 			.catch((error) => {
@@ -125,8 +119,6 @@ const Generator = () => {
 
 	const handleNext = () => {
 		if (step == 1) {
-			console.log(aadhaarNumber);
-			console.log(otp);
 			let encryptedOTP = encrypt(otp);
 			let data = {
 				otp: encryptedOTP,
@@ -139,7 +131,7 @@ const Generator = () => {
 					.then((response) => {
 						const txnId = response.data;
 						// setTxnId(txnId);
-						console.log('Transaction ID:', txnId);
+						// console.log('Transaction ID:', txnId);
 					})
 					.catch((error) => {
 						alert('Invalid OTP');
@@ -148,7 +140,7 @@ const Generator = () => {
 			setOtpDialogState(false);
 			setStep(step + 1);
 		} else {
-			console.log(mobileNumber);
+			// console.log(mobileNumber);
 			let encryptedOTP = encrypt(otp);
 			let data = {
 				otp: encryptedOTP,
@@ -161,7 +153,7 @@ const Generator = () => {
 					.then((response) => {
 						const txnId = response.data;
 						// setTxnId(txnId);
-						console.log('Transaction ID:', txnId)
+						// console.log('Transaction ID:', txnId)
 					})
 					.catch((error) => {
 						alert('Invalid OTP');
@@ -177,15 +169,9 @@ const Generator = () => {
 		setOtpDialogState(false);
 	};
 
-	const handleInputChange = (event) => {
-		const { name, value } = event.target;
-		setFormData({ ...formData, [name]: value });
-	};
-
-	const handleSubmit = (event) => {
-		event.preventDefault();
-		navigate("/patient/register")
-	};
+	const handleRegister = () => {
+		navigate('/patient/register')
+	}
 
 	return (
 		<>
@@ -194,7 +180,7 @@ const Generator = () => {
 					<div className='w-50 d-flex align-items-center justify-content-center rounded-start-4 border-end border-3'>
 						<img className='w-100' src={docsignupimg} />
 					</div>
-					<Form onClick={handleSubmit} className='container p-5 w-50'>
+					<Form className='container p-5 w-50'>
 						<ProgressBar striped animated variant='success' style={{color:'rgb(255, 229, 229)'}} now={(step / 3) * 100} />
 						{step === 1 && (
 							<Form.Group controlId='formStep1'>
@@ -317,34 +303,26 @@ const Generator = () => {
 												className='d-flex pt-3 flex-column align-items-center justify-content-center'
 												style={{}}>
 												<QrCode2Icon style={{ height: '60px', width: '60px' }} />
-												<Skeleton
-													className='mt-2 rounded'
-													animation='wave'
-													variant='rectangular'
-													width={200}
-													height={10}
-												/>
-												<Skeleton
-													className='mt-2 rounded'
-													animation='wave'
-													variant='rectangular'
-													width={200}
-													height={10}
-												/>
-												<Skeleton
-													className='mt-2 rounded'
-													animation='wave'
-													variant='rectangular'
-													width={200}
-													height={10}
-												/>
-												<Button
-													variant='outlined'
-													style={{ color: '#4200FF', borderColor: '#4200FF', fontSize: 'x-small' }}
-													className='mt-3 fw-bold px-3 py-2 text-capitalize rounded-2'
-													onClick={handleAbhaGeneration}>
-													Generate ABHA Number
-												</Button>
+												<span className='fw-bold'>ABHA Number:</span>
+												{healthIdNumber ?
+												<span>{healthIdNumber}</span> :
+												<>
+													<Skeleton
+														className='mt-2 rounded'
+														animation='wave'
+														variant='rectangular'
+														width={200}
+														height={30}
+													/>
+													<Button
+														variant='outlined'
+														style={{ color: '#4200FF', borderColor: '#4200FF', fontSize: 'x-small' }}
+														className='mt-3 fw-bold px-3 py-2 text-capitalize rounded-2'
+														onClick={handleAbhaGeneration}>
+														Generate ABHA Number
+													</Button>
+													</>
+												}
 											</div>
 										</Paper>
 									</Box>
@@ -374,8 +352,8 @@ const Generator = () => {
 									variant='contained'
 									style={{ backgroundColor: '#4200FF' }}
 									className='my-3 fw-bold p-2 px-5 text-capitalize'
-									type='submit'>
-									Submit
+									onClick={handleRegister}>
+									Register
 								</Button>
 							)}
 						</div>
