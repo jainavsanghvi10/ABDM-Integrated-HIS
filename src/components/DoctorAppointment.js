@@ -1,4 +1,7 @@
-import * as React from 'react';
+import React, {useEffect, useState} from 'react';
+import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
+
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
@@ -41,6 +44,28 @@ import Button from '@mui/material/Button';
 
 const DoctorAppointment = () => {
     const [checked, setChecked] = React.useState(true);
+
+    const {loginStatus, did, loginFunc} = useAuth();
+
+    const [docName, setDocName] = useState('Loading...')
+
+    useEffect(() => {
+      
+        const fetchDocDetails = async () => {
+            try {
+                const response = await axios.get(
+                    `http://localhost:8086/doctor/${did}`
+                );
+                setDocName(response.data.username);
+                return response.data
+            } catch (error) {
+                alert('Cannot Fetch');
+            }
+        }
+
+        fetchDocDetails();
+    }, [])
+    
 
     const handleChange = (event) => {
         setChecked(event.target.checked);
@@ -125,7 +150,7 @@ const DoctorAppointment = () => {
             <div className='w-50 py-3'>
                 <div className='mb-4'>
                     <span className='fw-bold text-secondary'>Welcome, </span>
-                    <span className='fw-bold font-purple'> Dr. Robert Harry</span>
+                    <span className='fw-bold font-purple'> {docName}</span>
                 </div>
 
                 <div className='d-flex'>

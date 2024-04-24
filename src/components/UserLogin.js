@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import Button from '@mui/material/Button';
 import hospitalImg from '../assets/images/Group 160.png'
-
+import { useNavigate } from 'react-router-dom';
 
 const UserLogin = () => {
-    // document.body.style = 'background: rgba(2, 49, 106);';
+    const {loginStatus, did, loginFunc} = useAuth();
+    const navigate = useNavigate();
 
     const [userId, setUserId] = useState('');
     const [password, setPassword] = useState('');
@@ -23,7 +25,6 @@ const UserLogin = () => {
         axios.post('http://localhost:8088/auth/signin', data)
             .then(response => {
                 const token = response.data;
-                // Store the token in localStorage or session storage for future use
                 // localStorage.setItem('token', token);
                 console.log('JWT Token:', token);
                 // Redirect or perform further actions based on successful login
@@ -33,6 +34,13 @@ const UserLogin = () => {
                 console.error('Errors logging in:', error);
             });
     };
+
+    const handleLoginTemp = () => {
+        if(loginFunc(userId, password)){
+            navigate('/doctor-appointment')
+        }
+    }
+
     return (
         // <div className='bg-blue' style={{height:''}}>
         <div className='py-5 bg-signup'>
@@ -47,7 +55,7 @@ const UserLogin = () => {
                     <p className='fw-bold text-center mb-5'>HMS LOGIN</p>
                     <div>
                         <div className='d-flex justify-content-between py-2 align-items-center'>
-                            <label for="basic-url" className="form-label fw-bold mb-0" style={{fontSize:'small'}}>User ID : </label>
+                            <label for="basic-url" className="form-label fw-bold mb-0" style={{fontSize:'small'}}>Username : </label>
                             <input type="text" className="ms-4 p-2 px-3 border border-2 border-secondary-subtle fw-bold" style={{ width: '250px', fontSize:'small' }} id="patient-email" placeholder="Enter User ID" value={userId} onChange={(e) => setUserId(e.target.value)} />
                         </div>
 
@@ -62,7 +70,7 @@ const UserLogin = () => {
                         <span className='mt-3 mx-auto' style={{ color: 'rgb(2,48,106)', textDecoration: 'underline', fontSize:'small' }}>Forgot Password ? </span>
                     </div>
 
-                    <Button variant="contained" style={{ width: '380px', backgroundColor: 'rgb(76, 77, 220)' }} className='mx-1 p-2 my-4 fw-bold text-capitalize' onClick={handleLogin}>Login</Button>
+                    <Button variant="contained" style={{ width: '380px', backgroundColor: 'rgb(76, 77, 220)' }} className='mx-1 p-2 my-4 fw-bold text-capitalize' onClick={handleLoginTemp}>Login</Button>
                     {/* <Button variant="outlined" style={{ width: '200px', color: 'rgb(2,48,106)' }} className='mx-1 my-3 fw-bold text-capitalize'>Reset</Button> */}
 
 

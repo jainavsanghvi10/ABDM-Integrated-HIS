@@ -1,29 +1,20 @@
 import * as React from 'react';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 
 import doctorSmile from '../assets/images/doctorSmiling.png'
-
 import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
 import SignalCellularAltRoundedIcon from '@mui/icons-material/SignalCellularAltRounded';
 import StarRateRoundedIcon from '@mui/icons-material/StarRateRounded';
 import ReviewsRoundedIcon from '@mui/icons-material/ReviewsRounded';
 import PatientNavbar from './Patient/PatientNavbar';
-
-import TextField from '@mui/material/TextField';
-import SearchIcon from '@mui/icons-material/Search';
-
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-
 import { DigitalClock } from '@mui/x-date-pickers/DigitalClock';
-
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 
@@ -43,7 +34,8 @@ const shouldDisableTime = (value, view) => {
 
 const PickSlot = () => {
 
-    const [date, setDate] = React.useState(dayjs('2022-04-17'));
+    const [date, setDate] = React.useState(dayjs());
+    
 
     return (
         <>
