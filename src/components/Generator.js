@@ -174,6 +174,41 @@ const Generator = () => {
 		navigate('/patient/register')
 	}
 
+	const handleFetchModes = (e) => {
+		e.preventDefault()
+		console.log("init")
+		let data = {
+			id: "dhanvi.b1@sbx",
+			purpose: "KYC_AND_LINK",
+			requesterType: "HIP",
+			requesterId: "IN0610089593"
+		};
+		axios.post('http://localhost:8087/auth/fetch-modes', data)
+		.then((response) => {
+			console.log(response);
+		})
+		.catch((error) => {
+			alert('Init failed');
+		});
+	}
+	const handleInit = (e) => {
+		e.preventDefault()
+		console.log("init")
+		let data = {
+			id: "dhanvi.b1@sbx",
+			purpose: "KYC_AND_LINK",
+			requesterType: "HIP",
+			requesterId: "IN0610089593"
+		};
+		axios.post('http://localhost:8087/auth/init', data)
+		.then((response) => {
+			console.log(response);
+		})
+		.catch((error) => {
+			alert('Init failed');
+		});
+	}
+
 	return (
 		<>
 			<div className='py-5 bg-signup'>
@@ -330,6 +365,15 @@ const Generator = () => {
 									</Box>
 								</div>
 							</Form.Group>
+						)}
+						{step === 4 && (
+							<Button
+								variant='outlined'
+								style={{ color: '#4200FF', borderColor:'#4200FF' }}
+								className='my-3 fw-bold text-capitalize'
+								onClick={handleFetchModes}>
+								Initialize Care Context
+							</Button>
 						)}
 						<div className='d-flex justify-content-around'>
 							{step > 1 && (

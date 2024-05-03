@@ -26,8 +26,9 @@ const DoctorsList = () => {
             const tempElement = []
             for(let i=0;i<listDocs.length;i++){
                 let doc = listDocs[i];
+                if(doc.role === "doctor")
                 tempElement.push(
-                <Card key={doc.username} className='shadow-lg m-3' style={{ background: 'rgb(255,229,229' }} sx={{ maxWidth: 345 }}>
+                <Card key={doc.name} className='shadow-lg m-3' style={{ background: 'rgb(255,229,229' }} sx={{ maxWidth: 345 }}>
                     <CardMedia
                         component="img"
                         alt="green iguana"
@@ -36,7 +37,7 @@ const DoctorsList = () => {
                     />
                     <CardContent>
                     <div>
-                        <p className='fw-bold m-0'>{doc.username}</p>
+                        <p className='fw-bold m-0'>{doc.name}</p>
                         <p className='text-secondary' style={{ fontSize: 'small' }}>Cardiologist</p>
                     </div>
                     <div className='row'>
@@ -51,7 +52,7 @@ const DoctorsList = () => {
                         <div className='col-3'>
                             <div className='d-flex flex-column justify-content-center align-items-center'>
                                 <SignalCellularAltRoundedIcon className='mb-2' style={{ color: '#4C4DDC' }} />
-                                <p className='fw-bold m-0' style={{ fontSize: 'small' }}>11+</p>
+                                <p className='fw-bold m-0' style={{ fontSize: 'small' }}>{doc.age}</p>
                                 <p className='text-secondary' style={{ fontSize: 'x-small' }}>Experience</p>
                             </div>
                         </div>
@@ -72,7 +73,7 @@ const DoctorsList = () => {
                             </div>
                         </div>
                     </div>
-                    <Button onClick={()=>handleRedirect(doc.doctorId)} className='d-block w-100' variant='contained' style={{ textTransform: 'capitalize', backgroundColor: '#4C4DDC' }}>
+                    <Button onClick={()=>handleRedirect(doc.staffId)} className='d-block w-100' variant='contained' style={{ textTransform: 'capitalize', backgroundColor: '#4C4DDC' }}>
                         Book Appointment
                     </Button>
                 </CardContent>
@@ -92,7 +93,7 @@ const DoctorsList = () => {
     const fetchAllDocs = async () => {
 		try {
 			const response = await axios.get(
-				'http://localhost:8086/doctor/allDoctors'
+				'http://localhost:8086/staff/allStaff'
 			);
             return response.data
 		} catch (error) {

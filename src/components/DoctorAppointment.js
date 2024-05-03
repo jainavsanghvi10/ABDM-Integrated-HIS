@@ -31,6 +31,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
@@ -41,40 +42,137 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import Rating from '@mui/material/Rating';
 
 import Button from '@mui/material/Button';
+import { useNavigate } from 'react-router-dom';
 
 const DoctorAppointment = () => {
-    const [checked, setChecked] = React.useState(true);
-
     const {loginStatus, did, loginFunc} = useAuth();
+    const navigate = useNavigate();
 
     const [docName, setDocName] = useState('Loading...')
+    const [appointmentList, setAppointmentList] = useState([])
+    const [patientCardElement, setPatientCardElement] = useState([]);
 
     useEffect(() => {
-      
-        const fetchDocDetails = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8086/doctor/${did}`
-                );
-                setDocName(response.data.username);
-                return response.data
-            } catch (error) {
-                alert('Cannot Fetch');
+        const fetchStaffByToken = async (token) => {
+            const data = {
+                jwtToken: token
             }
-        }
+            axios.post('http://localhost:8088/auth/getUserByToken', data)
+                .then(response => {
+                    // console.log(response.data);
+                    setDocName(response.data.username)
+                })
+                .catch(error => {
+                    alert("Invalid Credential")
+                    console.error('Errors logging in:', error);
+                });
+        };
 
-        fetchDocDetails();
+        const token = localStorage.getItem('token');
+        // console.log(token)
+        if(token)
+            fetchStaffByToken(token);
+        else
+            navigate('/user-login')
     }, [])
+
+
+    useEffect(() => {
+        if(appointmentList != null)
+            handleFetchAppointments();
+    }, [appointmentList])
     
+    async function handleCreateAppointment(){
+        const appointmentData = {
+            startTime: '09:00:00',
+            endTime: '10:00:00',
+            status: 0,
+            date: '2024-04-24'
+        };
+        try {
+            const response = await axios.post(`http://localhost:8086/doctor/${did}/createAppointment`, appointmentData);
+            console.log(response.data);
+          } catch (error) {
+            console.error('Error creating appointment:', error.message);
+            return null;
+          }
+    }
 
-    const handleChange = (event) => {
-        setChecked(event.target.checked);
-    };
+    async function fetchAppointments(){
+        try {
+            const response = await axios.get(
+                `http://localhost:8086/doctor/${did}/getAppointments`
+            );
+            console.log(response.data)
+            return response.data
+        } catch (error) {
+            alert('Cannot Fetch');
+        }
+    } 
 
-    const [rating, setRating] = React.useState(2);
+    async function handleFetchAppointments(){
+        // console.log("form appointments")
+        const tempElement = [];
+        for(let i=0;i<appointmentList.length;i++){
+            let a = appointmentList[i];
+            let start = a.startTime.split(":").slice(0, 2).join(":")
+            let end = a.endTime.split(":").slice(0, 2).join(":")
+            console.log(a);
+            tempElement.push(
+                <Accordion key={a.appointmentId}>
+                        <AccordionSummary
+                            expandIcon={<ArrowDropDownIcon />}
+                            aria-controls="panel2-content"
+                            id="panel2-header"
+                        >
+                            <div className='row align-items-center w-100'>
+                                <div className='col-3'>
+                                    <span className='mx-2 font-blue' style={{ fontSize: 'small' }}>{start} - {end}</span>
+                                </div>
+                                <div className='px-2 col-5'>
+                                    <span className='ms-2 fw-bold font-blue' style={{ fontSize: 'small' }}>User {a.appointmentId}</span>
+                                </div>
+                                {a.status ? 
+                                <div className='col-2 d-flex'>
+                                    <DoneAllIcon className='px-0 font-green' fontSize='small' />
+                                    <span className='ms-2 font-green fw-bold' style={{ fontSize: 'small' }}>Completed</span>
+                                </div>
+                                :
+                                <div className='col-2 d-flex'>
+                                    <PendingOutlinedIcon className='px-0 font-grey' fontSize='small' />
+                                    <span className='ms-2 font-grey fw-bold' style={{ fontSize: 'small' }}>Pending</span>
+                                </div>
+                                }
+                            </div>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <p className='text-secondary fw-bold'>Purpose:</p>
+                            <p style={{ fontSize: 'small' }} className='text-secondary'>
+                                Cough and Cold
+                            </p>
+                            {/* <input class="form-control" type="file" id="formFile"></input> */}
+                            <Fab className='me-4 rounded' variant="extended" size="small" color='primary'>
+                                <UploadIcon className='ms-1' sx={{ mr: 1 }} fontSize='small' />
+                                <span className='fw-bold me-2' style={{ fontSize: '11px', textTransform: 'capitalize' }}>Upload</span>
+                            </Fab>
+                            <Button variant="outlined" color='secondary' size='small' style={{ textTransform: 'capitalize', color: 'black', borderColor: 'black' }}>Appointment Completed</Button>
+                        </AccordionDetails>
+                    </Accordion>
+            )
+        }
+        setPatientCardElement(tempElement);
+    }
+
+    const [rating, setRating] = React.useState(4);
+
+    function handleLogout(){
+        localStorage.removeItem('token');
+        window.location.reload();
+    }
 
     return (
         <div className="container py-5 d-flex">
+            {/* <button onClick={handleCreateAppointment}>Update Appointment</button> */}
             <div className="w-25 pe-5">
                 <div className="pb-4 d-flex align-items-center">
                     <img height='50px' src={docicon} />
@@ -109,10 +207,11 @@ const DoctorAppointment = () => {
                             <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Messages</span>
                         </div>
 
-                        <div className='d-flex ms-2 my-4 align-items-center'>
-                            <AssignmentIcon className='text-secondary' fontSize='small' />
-                            <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Health Assessment</span>
-                        </div>
+                        <Button className='d-flex ms-2 my-4 align-items-center' color="error" variant="outlined"
+                        onClick={handleLogout}>
+                            <LogoutIcon className='text-secondary' fontSize='small' />
+                            <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Logout</span>
+                        </Button>
                     </div>
                 </div>
 
@@ -195,75 +294,7 @@ const DoctorAppointment = () => {
                 </div>
 
                 <div>
-                    <Accordion>
-                        <AccordionSummary
-                            expandIcon={<ArrowDropDownIcon />}
-                            aria-controls="panel2-content"
-                            id="panel2-header"
-                        >
-                            <div className='row align-items-center w-100'>
-                                <div className='col-3'>
-                                    <span className='mx-2 font-blue' style={{ fontSize: 'small' }}>17:00 - 17:30</span>
-                                </div>
-                                <div className='px-2 col-5'>
-                                    <span className='ms-2 fw-bold font-blue' style={{ fontSize: 'small' }}>Dhinchak Pooja</span>
-                                </div>
-                                <div className='col-2 d-flex'>
-                                    <PendingOutlinedIcon className='px-0 font-grey' fontSize='small' />
-                                    <span className='ms-2 font-grey fw-bold' style={{ fontSize: 'small' }}>Pending</span>
-                                </div>
-                            </div>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <p className='text-secondary fw-bold'>Purpose:</p>
-                            <p style={{ fontSize: 'small' }} className='text-secondary'>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                malesuada lacus ex, sit amet blandit leo lobortis eget.`1`
-
-                            </p>
-                            {/* <input class="form-control" type="file" id="formFile"></input> */}
-                            <Fab className='me-4 rounded' variant="extended" size="small" color='primary'>
-                                <UploadIcon className='ms-1' sx={{ mr: 1 }} fontSize='small' />
-                                <span className='fw-bold me-2' style={{ fontSize: '11px', textTransform: 'capitalize' }}>Upload</span>
-                            </Fab>
-                            <Button variant="outlined" color='secondary' size='small' style={{ textTransform: 'capitalize', color: 'black', borderColor: 'black' }}>Appointment Completed</Button>
-                        </AccordionDetails>
-                    </Accordion>
-
-                    <Accordion>
-                        <AccordionSummary
-                            expandIcon={<ArrowDropDownIcon />}
-                            aria-controls="panel2-content"
-                            id="panel2-header"
-                        >
-                            <div className='row align-items-center w-100'>
-                                <div className='col-3'>
-                                    <span className='mx-2 font-blue' style={{ fontSize: 'small' }}>17:00 - 17:30</span>
-                                </div>
-                                <div className='px-2 col-5'>
-                                    <span className='ms-2 fw-bold font-blue' style={{ fontSize: 'small' }}>Dhinchak Pooja</span>
-                                </div>
-                                <div className='col-2 d-flex'>
-                                    <DoneAllIcon className='px-0 font-green' fontSize='small' />
-                                    <span className='ms-2 font-green fw-bold' style={{ fontSize: 'small' }}>Completed</span>
-                                </div>
-                            </div>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <p className='text-secondary fw-bold'>Purpose:</p>
-                            <p style={{ fontSize: 'small' }} className='text-secondary'>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                malesuada lacus ex, sit amet blandit leo lobortis eget.
-                            </p>
-                            <Fab className='me-4 rounded' variant="extended" size="small" color='primary'>
-                                <UploadIcon className='ms-1' sx={{ mr: 1 }} fontSize='small' />
-                                <span className='fw-bold me-2' style={{ fontSize: '11px', textTransform: 'capitalize' }}>Upload</span>
-                            </Fab>
-                            <Button variant="outlined" color='secondary' size='small' style={{ textTransform: 'capitalize', color: 'black', borderColor: 'black' }}>Appointment Completed</Button>
-                        </AccordionDetails>
-                    </Accordion>
-
-
+                    {patientCardElement}
                 </div>
             </div>
 

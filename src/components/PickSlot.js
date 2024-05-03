@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React, {useState, useEffect} from 'react';
+import axios from "axios";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -18,23 +19,47 @@ import { DigitalClock } from '@mui/x-date-pickers/DigitalClock';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 
-const shouldDisableTime = (value, view) => {
-    const hour = value.hour();
-    if (view === 'hours') {
-        return hour < 9 || hour > 13;
-    }
-    if (view === 'minutes') {
-        const minute = value.minute();
-        return minute > 20 && hour === 13;
-    }
-    return false;
-};
-
-
+// const shouldDisableTime = (value, view) => {
+//     const hour = value.hour();
+//     if (view === 'hours') {
+//         return hour < 9 || hour > 13;
+//     }
+//     if (view === 'minutes') {
+//         const minute = value.minute();
+//         return minute > 20 && hour === 13;
+//     }
+//     return false;
+// };
 
 const PickSlot = () => {
+    const [date, setDate] = useState(dayjs());
+    const [staffId, setStaffId] = useState(null);
+    const [docName, setDocName] = useState(null);
+    const [docAge, setDocAge] = useState(null);
 
-    const [date, setDate] = React.useState(dayjs());
+    useEffect(() => {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        setStaffId(urlParams.get('id'));
+    }, [])
+    useEffect(() => {
+        fetchStaffById();
+    }, [staffId])
+    
+
+    const fetchStaffById = async () => {
+        if(!staffId) return;
+		try {
+			const response = await axios.get(
+				`http://localhost:8086/staff/${staffId}`
+			);
+            setDocName(response.data.name);
+            setDocAge(response.data.age);
+            return response.data
+		} catch (error) {
+			alert('Cannot Fetch');
+		}
+	};
     
 
     return (
@@ -50,7 +75,7 @@ const PickSlot = () => {
                     />
                     <CardContent>
                         <div>
-                            <p className='fw-bold m-0'>Dr. Elia Anna</p>
+                            <p className='fw-bold m-0'>{docName}</p>
                             <p className='text-secondary' style={{ fontSize: 'small' }}>Cardiologist | Mars Hospital</p>
                         </div>
                         <div className='row'>
@@ -65,7 +90,7 @@ const PickSlot = () => {
                             <div className='col-3'>
                                 <div className='d-flex flex-column justify-content-center align-items-center'>
                                     <SignalCellularAltRoundedIcon className='mb-2' style={{ color: '#4C4DDC' }} />
-                                    <p className='fw-bold m-0' style={{ fontSize: 'small' }}>11+</p>
+                                    <p className='fw-bold m-0' style={{ fontSize: 'small' }}>{docAge}</p>
                                     <p className='text-secondary' style={{ fontSize: 'x-small' }}>Experience</p>
                                 </div>
                             </div>

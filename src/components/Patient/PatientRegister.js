@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import axios from 'axios';
 import hospitalImg from '../../assets/images/Group 160.png'
+import { useNavigate } from 'react-router-dom';
 
 const PatientRegister = () => {
     const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ const PatientRegister = () => {
         dob: '',
         abhaAddress: ''
     });
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -26,6 +28,7 @@ const PatientRegister = () => {
             );
             const data = response.data;
             console.log(data);
+            navigate("/doctors-list")
         } catch (error) {
             console.error('Error:', error);
         }

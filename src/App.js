@@ -20,13 +20,14 @@ import UserLogin from './components/UserLogin';
 import DoctorAppointment from './components/DoctorAppointment';
 import PickSlot from './components/PickSlot';
 import StaffAdmin from './components/StaffAdmin';
+import TrashCopy from './components/TrashCopy';
 
 function App() {
   return (
     <Router>
       <AuthProvider>
       <Routes>
-        <Route path="/" element={<Navigate to="/abha-generator" replace={true} />} />
+        <Route path="/" element={<Navigate to="/patient/register" replace={true} />} />
 
         <Route path="/patient/login" element={<PatientLogin />} />
         <Route path="/patient/register" element={<PatientRegister />} />
@@ -48,6 +49,9 @@ function App() {
 
         <Route path="/abha-generator" element={<ABHAGenerator/>} />
         <Route path='/staff-admin' element={<StaffAdmin/>}/>
+
+        <Route path='/test' element={<TrashCopy/>}/>
+
       </Routes>
       </AuthProvider>
     </Router>
