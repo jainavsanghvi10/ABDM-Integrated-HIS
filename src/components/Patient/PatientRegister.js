@@ -23,7 +23,7 @@ const PatientRegister = () => {
         console.log(formData);
         try {
             const response = await axios.post(
-                'http://localhost:8086/registerPatient',
+                'http://localhost:8086/patients/create',
                 formData
             );
             const data = response.data;

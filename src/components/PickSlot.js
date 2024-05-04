@@ -18,6 +18,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DigitalClock } from '@mui/x-date-pickers/DigitalClock';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import { Input } from '@mui/material';
 
 // const shouldDisableTime = (value, view) => {
 //     const hour = value.hour();
@@ -33,9 +34,11 @@ import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 
 const PickSlot = () => {
     const [date, setDate] = useState(dayjs());
+    const [time, setTime] = useState(dayjs());
     const [staffId, setStaffId] = useState(null);
     const [docName, setDocName] = useState(null);
     const [docAge, setDocAge] = useState(null);
+    const [patientId, setPatientId] = useState(null);
 
     useEffect(() => {
         const queryString = window.location.search;
@@ -45,7 +48,6 @@ const PickSlot = () => {
     useEffect(() => {
         fetchStaffById();
     }, [staffId])
-    
 
     const fetchStaffById = async () => {
         if(!staffId) return;
@@ -60,6 +62,63 @@ const PickSlot = () => {
 			alert('Cannot Fetch');
 		}
 	};
+
+    function timeAdder30(time){
+        const sp = time.split(":");
+        if(sp[1] != "30"){
+            return sp[0] + ":30:" + sp[2];
+        }
+        else{
+            let hour = Number(sp[0]) + 1;
+            if(hour < 10)
+                hour = `0${hour}`;
+            else
+                hour = `${hour}`
+            return hour + ":00:" + sp[2];
+        }
+    }
+
+    const createAndBookAppointment = async () => {
+        const start = extractTime(time);
+        const end = timeAdder30(start);
+
+        console.log(start, end);
+        const appointmentData = {
+            startTime: start,
+            endTime: end,
+            status: 0,
+            date: extractDate(date)
+        };
+
+        await axios.post(`http://localhost:8086/doctor/${staffId}/createAppointment`, appointmentData)
+            .then(response => {
+                console.log("appointment created");
+            })
+            .catch(error => {
+                alert("Appointment not created")
+                console.error('Errors logging in:', error);
+            });
+
+        const response = await axios.get(`http://localhost:8086/doctor/${staffId}/getAppointments`)
+        const appointmentList = response.data;
+        const appointmentId = appointmentList[appointmentList.length-1].appointmentId
+        
+        await axios.post(`http://localhost:8086/doctor/${staffId}/bookAppointment/${appointmentId}/${patientId}`, appointmentData)
+            .then(response => {
+                console.log(response.data);
+            })
+            .catch(error => {
+                alert("Appointment not created")
+                console.error('Errors logging in:', error);
+        });
+    }
+
+    function extractDate(date){
+        return date["$d"].toJSON().split("T")[0]
+    }
+    function extractTime(time){
+        return time["$d"].toTimeString().split(" ")[0]
+    }
     
 
     return (
@@ -134,14 +193,24 @@ const PickSlot = () => {
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DigitalClock
                                     skipDisabled
-                                    minTime={dayjs('2022-04-17T09:00')}
-                                    timeStep={60}
+                                    minTime={dayjs(`${extractDate(date)}T09:00`)}
+                                    maxTime={dayjs(`${extractDate(date)}T23:00`)}
+                                    value={time}
+                                    onChange={(newTime) => setTime(newTime)}
+                                    timeStep={30}
                                     className='shadow-sm border rounded px-4'
                                 />
                             </LocalizationProvider>
+
+                            <Input onChange={(e)=>setPatientId(e.target.value)} placeholder='Patient ID'/>
+
                             <div className='d-flex flex-column'>
-                                <Button className='mt-4' variant='contained' style={{ backgroundColor: 'black', fontSize:'small', textTransform:'capitalize' }} startIcon={<EventAvailableIcon />}>Book Slot</Button>
-                                <Button className='mt-2' variant='outlined' style={{ color: 'black', borderColor: 'black', fontSize:'small', textTransform:'capitalize' }} startIcon={<ArrowBackIcon />}>Go Back</Button>
+                                <Button className='mt-4' 
+                                variant='contained' 
+                                style={{ backgroundColor: 'black', fontSize:'small', textTransform:'capitalize' }} 
+                                startIcon={<EventAvailableIcon />}
+                                onClick={createAndBookAppointment}
+                                >Book Slot</Button>
                             </div>
                         </div>
                     </div>

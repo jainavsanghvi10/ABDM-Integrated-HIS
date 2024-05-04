@@ -49,6 +49,7 @@ const DoctorAppointment = () => {
     const navigate = useNavigate();
 
     const [docName, setDocName] = useState('Loading...')
+    const [docId, setDocId] = useState(null)
     const [appointmentList, setAppointmentList] = useState([])
     const [patientCardElement, setPatientCardElement] = useState([]);
 
@@ -59,8 +60,8 @@ const DoctorAppointment = () => {
             }
             axios.post('http://localhost:8088/auth/getUserByToken', data)
                 .then(response => {
-                    // console.log(response.data);
-                    setDocName(response.data.username)
+                    setDocId(response.data.id);
+                    setDocName(response.data.username);
                 })
                 .catch(error => {
                     alert("Invalid Credential")
@@ -81,34 +82,41 @@ const DoctorAppointment = () => {
         if(appointmentList != null)
             handleFetchAppointments();
     }, [appointmentList])
-    
-    async function handleCreateAppointment(){
-        const appointmentData = {
-            startTime: '09:00:00',
-            endTime: '10:00:00',
-            status: 0,
-            date: '2024-04-24'
-        };
-        try {
-            const response = await axios.post(`http://localhost:8086/doctor/${did}/createAppointment`, appointmentData);
-            console.log(response.data);
-          } catch (error) {
-            console.error('Error creating appointment:', error.message);
-            return null;
-          }
-    }
+    useEffect(() => {
+        if(docId != null)
+            fetchAppointments();
+    }, [docId])
 
     async function fetchAppointments(){
         try {
             const response = await axios.get(
-                `http://localhost:8086/doctor/${did}/getAppointments`
+                `http://localhost:8086/doctor/${docId}/getAppointments`
             );
-            console.log(response.data)
+            console.log(response.data);
+            setAppointmentList(response.data);
             return response.data
         } catch (error) {
             alert('Cannot Fetch');
         }
-    } 
+    }
+    
+    async function handleAppointmentStatus(a){
+        const appointmentData = {
+            startTime: a.startTime,
+            endTime: a.endTime,
+            status: 1,
+            date: a.date
+        };
+        await axios.post(`http://localhost:8086/doctor/${docId}/updateAppointment/${a.appointmentId}`, appointmentData)
+            .then(response => {
+                console.log("appointment status updated");
+            })
+            .catch(error => {
+                alert("Appointment status not updated");
+                console.error('Errors logging in:', error);
+            });
+        // window.location.reload()
+    }
 
     async function handleFetchAppointments(){
         // console.log("form appointments")
@@ -117,7 +125,7 @@ const DoctorAppointment = () => {
             let a = appointmentList[i];
             let start = a.startTime.split(":").slice(0, 2).join(":")
             let end = a.endTime.split(":").slice(0, 2).join(":")
-            console.log(a);
+            
             tempElement.push(
                 <Accordion key={a.appointmentId}>
                         <AccordionSummary
@@ -155,7 +163,13 @@ const DoctorAppointment = () => {
                                 <UploadIcon className='ms-1' sx={{ mr: 1 }} fontSize='small' />
                                 <span className='fw-bold me-2' style={{ fontSize: '11px', textTransform: 'capitalize' }}>Upload</span>
                             </Fab>
-                            <Button variant="outlined" color='secondary' size='small' style={{ textTransform: 'capitalize', color: 'black', borderColor: 'black' }}>Appointment Completed</Button>
+                            <Button 
+                                variant="outlined" 
+                                color='secondary' 
+                                size='small' 
+                                style={{ textTransform: 'capitalize', color: 'black', borderColor: 'black' }}
+                                onClick={()=>{handleAppointmentStatus(a)}}
+                                >Appointment Completed</Button>
                         </AccordionDetails>
                     </Accordion>
             )
@@ -172,7 +186,7 @@ const DoctorAppointment = () => {
 
     return (
         <div className="container py-5 d-flex">
-            {/* <button onClick={handleCreateAppointment}>Update Appointment</button> */}
+            {/* <button onClick={fetchAppointments}>Update Appointment</button> */}
             <div className="w-25 pe-5">
                 <div className="pb-4 d-flex align-items-center">
                     <img height='50px' src={docicon} />

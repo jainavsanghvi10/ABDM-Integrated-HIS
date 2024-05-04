@@ -26,6 +26,7 @@ const StaffAdmin = () => {
     const [password, setPassword] = useState(null);
     const [age, setAge] = useState(null);
     const [role, setRole] = useState(null);
+    const [lNumber, setLNumber] = useState(null);
     const [open, setOpen] = React.useState(false);
     const [type, setType] = useState(null);
 
@@ -85,6 +86,11 @@ const StaffAdmin = () => {
                 password: password,
                 role: role
             };
+            const doc = {
+                username: username,
+                password: password,
+                licenseNumber: lNumber
+            };
 
 			await axios.post(
 				'http://localhost:8086/staff/create',
@@ -94,6 +100,11 @@ const StaffAdmin = () => {
 				'http://localhost:8088/auth/user/signup',
 				user
 			);
+            if(role == "doctor")
+                await axios.post(
+                    'http://localhost:8086/doctor/register',
+                    doc
+                );
 
             window.location.reload();
 		} catch (error) {
@@ -173,6 +184,13 @@ const StaffAdmin = () => {
 							<Input
 								required
 								onChange={(e)=>setAge(e.target.value)}
+							/>
+						</FormControl>
+                        <FormControl>
+							<FormLabel>License Number</FormLabel>
+							<Input
+								required
+								onChange={(e)=>setLNumber(e.target.value)}
 							/>
 						</FormControl>
 						<FormControl>
