@@ -8,17 +8,10 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-  const [did, setDid] = useState(-1);
-  const [loginStatus, setLoginStatus] = useState(false);
+  const [did, setDid] = useState(null);
+  const [loginStatus, setLoginStatus] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // function signup(email, password) {
-  //   return auth.createUserWithEmailAndPassword(email, password);
-  // }
-
-  // function login(email, password) {
-  //   return auth.signInWithEmailAndPassword(email, password);
-  // }
   const fetchAllDocs = async () => {
       try {
           const response = await axios.get(
@@ -30,6 +23,21 @@ export function AuthProvider({ children }) {
       }
   };
 
+  const fetchStaffByToken = async () => {
+    const token = localStorage.getItem('token');
+    const data = {
+      jwtToken: token
+    }
+    axios.post('http://localhost:8088/getUserByToken', data)
+      .then(response => {
+          console.log(response.data);
+      })
+      .catch(error => {
+          alert("Invalid Credential")
+          console.error('Errors logging in:', error);
+      });
+	};
+
   async function loginFunc(username, password){
     const listOfDocs = await fetchAllDocs();
     for(let i=0;i<listOfDocs.length;i++){
@@ -38,11 +46,10 @@ export function AuthProvider({ children }) {
       if(doc.username == username && doc.password == password){
         setLoginStatus(true);
         setDid(doc.doctorId)
-        alert("Login Success");
         return true;
       }
     }
-    alert("Invalid Username or Password")
+    setLoginStatus(false);
     return false;
 }
 

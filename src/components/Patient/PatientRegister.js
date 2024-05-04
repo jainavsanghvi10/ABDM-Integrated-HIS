@@ -2,8 +2,31 @@ import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import axios from 'axios';
 import hospitalImg from '../../assets/images/Group 160.png'
+import { useNavigate } from 'react-router-dom';
+
+
+import LogoutIcon from '@mui/icons-material/Logout';
+import docicon from '../../assets/images/HEARTLOGO.png'
+import Divider from '@mui/material/Divider';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
+import WheelchairPickupIcon from '@mui/icons-material/WheelchairPickup';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import ChatIcon from '@mui/icons-material/Chat';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import PersonIcon from '@mui/icons-material/Person';
+import InfoIcon from '@mui/icons-material/Info';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const PatientRegister = () => {
+
+    function handleLogout() {
+        localStorage.removeItem('token');
+        window.location.reload();
+    }
+
+
     const [formData, setFormData] = useState({
         username: '',
         email: '',
@@ -11,6 +34,7 @@ const PatientRegister = () => {
         dob: '',
         abhaAddress: ''
     });
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -21,51 +45,126 @@ const PatientRegister = () => {
         console.log(formData);
         try {
             const response = await axios.post(
-                'http://localhost:8086/registerPatient',
+                'http://localhost:8086/patients/create',
                 formData
             );
             const data = response.data;
             console.log(data);
+            navigate("/doctors-list")
         } catch (error) {
             console.error('Error:', error);
         }
     };
     return (
-        // <>
-        <div className='py-5 bg-signup'>
-            <div className='d-flex w-75 mx-auto border shadow-lg rounded rounded-4' style={{ background: 'rgb(255, 229, 229)' }}>
-                <div className='w-50 d-flex align-items-center justify-content-center rounded-start-4 border-end border-3'>
-                    <img className='my-4 w-100' src={hospitalImg} />
+        <>
+            <div className="px-3 py-3 d-flex align-items-center justify-content-between border-bottom border-3">
+                <div className='d-flex align-items-center'>
+                    <img height='30px' src={docicon} />
+                    <h5 className="fw-bold mb-0 ms-2">DocSwift</h5>
                 </div>
+                <Button className='d-flex ms-2 align-items-center' style={{ borderColor: '#4200FF' }} variant="outlined"
+                    onClick={handleLogout}>
+                    <LogoutIcon className='font-purple' fontSize='small' />
+                    <span className='ms-3 fw-bold font-purple' style={{ fontSize: 'small' }}>Logout</span>
+                </Button>
+            </div>
+            <div className="d-flex">
+                <div className="w-sidebar pt-4 border-end border-3">
 
-                <div className='container p-5 w-50'>
-                    <p className="fw-bold font-purple mb-3 ms-2" style={{fontSize:'large'}}>Patient Register</p>
-                    {/* <label for="exampleFormControlInput1" class="form-label">Enter Mobile Number</label> */}
-                    <input type="text" className="my-2 p-3 border border-2 fw-bold" style={{ width: '350px', fontSize:'small' }} id="username" onChange={handleChange} placeholder="Username">
-                    </input>
-                    <input type="text" className="my-2 p-3 border border-2 fw-bold" style={{ width: '350px', fontSize:'small' }} id="email" onChange={handleChange} placeholder="Email Address">
-                    </input>
+                    <div className='px-3'>
+                        <div className='d-flex justify-content-between'>
+                            <span className='fw-bold'>Primary Menu</span>
+                            <MoreVertIcon fontSize='small' />
+                        </div>
+                        <div className='py-2'>
+                            <div className='d-flex ms-2 my-4 align-items-center'>
+                                <DashboardRoundedIcon className='text-secondary' fontSize='small' />
+                                <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Dashboard</span>
+                            </div>
+
+                            <div className='d-flex ms-2 my-4 align-items-center'>
+                                <WheelchairPickupIcon className='text-secondary' fontSize='small' />
+                                <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Top Doctor's</span>
+                            </div>
+
+                            <div className='d-flex ms-2 my-4 align-items-center'>
+                                <CalendarMonthIcon className='text-secondary' fontSize='small' />
+                                <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Appointment</span>
+                            </div>
+
+                            <div className='d-flex ms-2 my-4 align-items-center'>
+                                <ChatIcon className='text-secondary' fontSize='small' />
+                                <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Messages</span>
+                            </div>
 
 
-
-                    <div className='d-flex'>
-                        <select className="form-select my-2 p-3 border-2 fw-bold" style={{ width: '175px', fontSize:'small' }} aria-label="Default select example" onChange={handleChange} value={formData['gender']} id='gender'>
-                            <option value="" selected>Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                        </select>
-
-                        <input type="date" className="my-2 p-3 border border-2 fw-bold" style={{ width: '175px', fontSize:'small' }} id="dob" onChange={handleChange}>
-                        </input>
-
+                        </div>
                     </div>
 
-                    <input type="text" className="my-2 p-3 border border-2  fw-bold" style={{ width: '350px', fontSize:'small' }} id="abhaAddress" placeholder="ABHA Address" onChange={handleChange}>
-                    </input>
+                    <Divider className='mb-4' style={{ height: '2px' }} />
 
-                    <Button variant="outlined" size='small' style={{color: '#4200FF', borderColor:'#4200FF', fontSize:'small' }} className='my-3 fw-bold p-2 px-5 text-capitalize rounded-2' onClick={handleSubmit}>Submit</Button>
+                    <div className='ps-3'>
+                        <div className='d-flex justify-content-between'>
+                            <span className='fw-bold'>Profile</span>
+                        </div>
 
-                    {/* <div className='d-flex'>
+                        <div className='py-2'>
+                            <div className='d-flex ms-2 my-4 align-items-center'>
+                                <PersonIcon className='text-secondary' fontSize='small' />
+                                <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Profile Settings</span>
+                            </div>
+
+                            <div className='d-flex ms-2 my-4 align-items-center'>
+                                <NotificationsActiveIcon className='text-secondary' fontSize='small' />
+                                <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Notification</span>
+                            </div>
+
+                            <div className='d-flex ms-2 my-4 align-items-center'>
+                                <SettingsIcon className='text-secondary' fontSize='small' />
+                                <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Help & Settings</span>
+                            </div>
+
+                            <div className='d-flex ms-2 my-4 align-items-center'>
+                                <InfoIcon className='text-secondary' fontSize='small' />
+                                <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>About DocSwift</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className='py-5 bg-signup'>
+                    <div className='d-flex w-75 mx-auto border shadow-lg rounded rounded-4' style={{ background: 'rgb(255, 229, 229)' }}>
+                        <div className='w-50 d-flex align-items-center justify-content-center rounded-start-4 border-end border-3'>
+                            <img className='my-4 w-100' src={hospitalImg} />
+                        </div>
+
+                        <div className='container p-5 w-50'>
+                            <p className="fw-bold font-purple mb-3 ms-2" style={{ fontSize: 'large' }}>Patient Register</p>
+                            {/* <label for="exampleFormControlInput1" class="form-label">Enter Mobile Number</label> */}
+                            <input type="text" className="my-2 p-3 border border-2 fw-bold" style={{ width: '350px', fontSize: 'small' }} id="username" onChange={handleChange} placeholder="Username">
+                            </input>
+                            <input type="text" className="my-2 p-3 border border-2 fw-bold" style={{ width: '350px', fontSize: 'small' }} id="email" onChange={handleChange} placeholder="Email Address">
+                            </input>
+
+
+
+                            <div className='d-flex'>
+                                <select className="form-select my-2 p-3 border-2 fw-bold" style={{ width: '175px', fontSize: 'small' }} aria-label="Default select example" onChange={handleChange} value={formData['gender']} id='gender'>
+                                    <option value="" selected>Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+
+                                <input type="date" className="my-2 p-3 border border-2 fw-bold" style={{ width: '175px', fontSize: 'small' }} id="dob" onChange={handleChange}>
+                                </input>
+
+                            </div>
+
+                            <input type="text" className="my-2 p-3 border border-2  fw-bold" style={{ width: '350px', fontSize: 'small' }} id="abhaAddress" placeholder="ABHA Address" onChange={handleChange}>
+                            </input>
+
+                            <Button variant="outlined" size='small' style={{ color: '#4200FF', borderColor: '#4200FF', fontSize: 'small' }} className='my-3 fw-bold p-2 px-5 text-capitalize rounded-2' onClick={handleSubmit}>Submit</Button>
+
+                            {/* <div className='d-flex'>
                     <select class="form-select my-3 p-3 border-2 fw-bold" style={{ width: '166px' }} aria-label="Default select example">
                         <option selected>State</option>
                     </select>
@@ -79,7 +178,7 @@ const PatientRegister = () => {
                 </div> */}
 
 
-                    {/* <div className='mt-4 d-flex flex-column align-items-center'>
+                            {/* <div className='mt-4 d-flex flex-column align-items-center'>
                     <Button variant="outlined" style={{ color: 'rgb(2,48,106)' }} className='w-100 my-3 fw-bold px-5 text-capitalize'>Login with ABHA Address</Button>
                     <Button variant="outlined" style={{ color: 'rgb(2,48,106)' }} className='w-100 my-3 fw-bold px-5 text-capitalize'>Login with Email ID</Button>
                     <Button variant="outlined" style={{ color: 'rgb(2,48,106)' }} className='w-100 my-3 fw-bold px-5 text-capitalize'>Login with ABHA Number</Button>
@@ -97,10 +196,11 @@ const PatientRegister = () => {
                     </div>
                 </div> */}
 
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        // </>
+        </>
     )
 }
 

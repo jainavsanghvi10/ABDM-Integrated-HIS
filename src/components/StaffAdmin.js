@@ -24,6 +24,9 @@ import Option from '@mui/joy/Option';
 const StaffAdmin = () => {
     const [username, setUsername] = useState(null);
     const [password, setPassword] = useState(null);
+    const [age, setAge] = useState(null);
+    const [role, setRole] = useState(null);
+    const [lNumber, setLNumber] = useState(null);
     const [open, setOpen] = React.useState(false);
     const [type, setType] = useState(null);
 
@@ -37,59 +40,72 @@ const StaffAdmin = () => {
             const tempElement = []
             for(let i=0;i<listDocs.length;i++){
                 let doc = listDocs[i];
-                tempElement.push(
-                    <Card key={doc.username} className='shadow-lg m-3' style={{ background: 'rgb(255,229,229' }} sx={{ maxWidth: 300 }}>
-                        <CardMedia
-                            component="img"
-                            alt="green iguana"
-                            height="200"
-                            image={doctorSmile}
-                        />
-                        <CardContent>
-                            <div className='d-flex justify-content-between'>
-                                <div>
-                                    <p className='fw-bold m-0'>{doc.username}</p>
-                                    <p className='text-secondary' style={{ fontSize: 'small' }}>Cardiologist</p>
+                // staffId: 2, name: 'Rahul', age: 23, role: 'doctor'
+                    tempElement.push(
+                        <Card key={doc.name} className='shadow-lg m-3' style={{ background: 'rgb(255,229,229' }} sx={{ maxWidth: 300 }}>
+                            <CardMedia
+                                component="img"
+                                alt="green iguana"
+                                height="200"
+                                image={doctorSmile}
+                            />
+                            <CardContent>
+                                <div className='d-flex justify-content-between'>
+                                    <div>
+                                        <p className='fw-bold m-0'>{doc.name}</p>
+                                        <p className='text-secondary' style={{ fontSize: 'small' }}>{doc.role}</p>
+                                    </div>
+                                    <div>
+                                        <Fab size="small" color="primary" aria-label="add" style={{ backgroundColor: '#4200FF' }}>
+                                            <DeleteIcon />
+                                        </Fab>
+                                    </div>
                                 </div>
-                                <div>
-                                    <Fab size="small" color="primary" aria-label="add" style={{ backgroundColor: '#4200FF' }}>
-                                        <DeleteIcon onClick={()=>deleteDoctor(doc.doctorId)} />
-                                    </Fab>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                )
+                            </CardContent>
+                        </Card>
+                    )
             }
+            
             setDocCardsElement(tempElement)
         }
         createCards();
       
     }, [])
 
-    async function deleteDoctor(id) {
-        try {
-          const response = await axios.delete(`http://localhost:8086/doctor/delete/${id}`);
-          window.location.reload();
-        } catch (error) {
-          console.error('Error deleting doctor:', error.message);
-          return null;
-        }
-    }
-
 	const handleCreateStaff = async (e) => {
         e.preventDefault();
         // console.log(username, password, type);
 		try {
-			const data = {
-				username: username,
-                password: password
-			};
+            const staff = {
+                name: username,
+                age: age,
+                role: role
+            }
+            const user = {
+                email: username,
+                password: password,
+                role: role
+            };
+            const doc = {
+                username: username,
+                password: password,
+                licenseNumber: lNumber
+            };
 
-			const response = await axios.post(
-				'http://localhost:8086/doctor/register',
-				data
+			await axios.post(
+				'http://localhost:8086/staff/create',
+				staff
 			);
+			await axios.post(
+				'http://localhost:8088/auth/user/signup',
+				user
+			);
+            if(role == "doctor")
+                await axios.post(
+                    'http://localhost:8086/doctor/register',
+                    doc
+                );
+
             window.location.reload();
 		} catch (error) {
 			alert('Staff not created');
@@ -99,7 +115,7 @@ const StaffAdmin = () => {
     const fetchAllDocs = async () => {
 		try {
 			const response = await axios.get(
-				'http://localhost:8086/doctor/allDoctors'
+				'http://localhost:8086/staff/allStaff'
 			);
             return response.data
 		} catch (error) {
@@ -149,7 +165,7 @@ const StaffAdmin = () => {
 					</DialogContent>
 					<form onSubmit={handleCreateStaff}>
 						<FormControl>
-							<FormLabel>HealthCare Worker ID</FormLabel>
+							<FormLabel>Username</FormLabel>
 							<Input
 								autoFocus
 								required
@@ -157,20 +173,39 @@ const StaffAdmin = () => {
 							/>
 						</FormControl>
 						<FormControl>
-							<FormLabel>HealthCare Worker Name</FormLabel>
+							<FormLabel>Password</FormLabel>
 							<Input
 								required
 								onChange={(e)=>setPassword(e.target.value)}
 							/>
 						</FormControl>
+                        <FormControl>
+							<FormLabel>Age</FormLabel>
+							<Input
+								required
+								onChange={(e)=>setAge(e.target.value)}
+							/>
+						</FormControl>
+                        <FormControl>
+							<FormLabel>License Number</FormLabel>
+							<Input
+								required
+								onChange={(e)=>setLNumber(e.target.value)}
+							/>
+						</FormControl>
 						<FormControl>
 							<FormLabel>Type</FormLabel>
 							<Select 
-								id='type'
-								onChange={(e)=>setType(e.target.value)}
+								id='role'
+                                required
+								onChange={(e)=>{
+                                    setRole(e.target.getAttribute('tabindex'));
+                                    console.log(e.target.getAttribute('tabindex'));
+                                }}
 							>
-								<Option value='Doctor'>Doctor</Option>
-								<Option value='Nurse'>Nurse</Option>
+								<Option tabIndex='doctor' value='doctor'>Doctor</Option>
+								<Option tabIndex='nurse' value='nurse'>Nurse</Option>
+								<Option tabIndex='receptionist' value='receptionist'>Receptionist</Option>
 							</Select>
 						</FormControl>
 						<Button type='submit' >Submit</Button>

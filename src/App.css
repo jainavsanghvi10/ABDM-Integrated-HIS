@@ -55,3 +55,8 @@ td, th{
 .font-small{
   font-size: small;
 }
+
+.w-sidebar{
+  width: 250px;
+  min-height:100vh;
+}

@@ -17,6 +17,20 @@ import aadhaarImg from '../assets/images/online_transaction.svg'
 import aadhaarImg2 from '../assets/images/hire.svg'
 // import signupBackground from '../assets/images/signupBackground.png'
 
+import LogoutIcon from '@mui/icons-material/Logout';
+import docicon from '../assets/images/HEARTLOGO.png'
+import Divider from '@mui/material/Divider';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
+import WheelchairPickupIcon from '@mui/icons-material/WheelchairPickup';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import ChatIcon from '@mui/icons-material/Chat';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import PersonIcon from '@mui/icons-material/Person';
+import InfoIcon from '@mui/icons-material/Info';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import SettingsIcon from '@mui/icons-material/Settings';
+
 const Generator = () => {
 	const [step, setStep] = useState(1);
 	const navigate = useNavigate();
@@ -174,192 +188,315 @@ const Generator = () => {
 		navigate('/patient/register')
 	}
 
+	const handleFetchModes = (e) => {
+		e.preventDefault()
+		console.log("init")
+		let data = {
+			id: "dhanvi.b1@sbx",
+			purpose: "KYC_AND_LINK",
+			requesterType: "HIP",
+			requesterId: "IN0610089593"
+		};
+		axios.post('http://localhost:8087/auth/fetch-modes', data)
+			.then((response) => {
+				console.log(response);
+			})
+			.catch((error) => {
+				alert('Init failed');
+			});
+	}
+	const handleInit = (e) => {
+		e.preventDefault()
+		console.log("init")
+		let data = {
+			id: "dhanvi.b1@sbx",
+			purpose: "KYC_AND_LINK",
+			requesterType: "HIP",
+			requesterId: "IN0610089593"
+		};
+		axios.post('http://localhost:8087/auth/init', data)
+			.then((response) => {
+				console.log(response);
+			})
+			.catch((error) => {
+				alert('Init failed');
+			});
+	}
+	function handleLogout() {
+		localStorage.removeItem('token');
+		window.location.reload();
+	}
+
 	return (
 		<>
-			<div className='py-5 bg-signup'>
-				<div className='d-flex w-75 mx-auto border shadow-lg rounded rounded-4' style={{background:'rgb(255, 229, 229)'}}>
-					<div className='w-50 d-flex flex-column align-items-center justify-content-center rounded-start-4 border-end border-3'>
-						<img className='w-75 my-4' src={aadhaarImg2} />
-						<img className='w-75 my-4' src={aadhaarImg} />
+			<div className="px-3 py-3 d-flex align-items-center justify-content-between border-bottom border-3">
+				<div className='d-flex align-items-center'>
+					<img height='30px' src={docicon} />
+					<h5 className="fw-bold mb-0 ms-2">DocSwift</h5>
+				</div>
+				<Button className='d-flex ms-2 align-items-center' style={{ borderColor: '#4200FF' }} variant="outlined"
+					onClick={handleLogout}>
+					<LogoutIcon className='font-purple' fontSize='small' />
+					<span className='ms-3 fw-bold font-purple' style={{ fontSize: 'small' }}>Logout</span>
+				</Button>
+			</div>
+			<div className="d-flex">
+				<div className="w-sidebar pt-4 border-end border-3">
+
+					<div className='px-3'>
+						<div className='d-flex justify-content-between'>
+							<span className='fw-bold'>Primary Menu</span>
+							<MoreVertIcon fontSize='small' />
+						</div>
+						<div className='py-2'>
+							<div className='d-flex ms-2 my-4 align-items-center'>
+								<DashboardRoundedIcon className='text-secondary' fontSize='small' />
+								<span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Dashboard</span>
+							</div>
+
+							<div className='d-flex ms-2 my-4 align-items-center'>
+								<WheelchairPickupIcon className='text-secondary' fontSize='small' />
+								<span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Top Doctor's</span>
+							</div>
+
+							<div className='d-flex ms-2 my-4 align-items-center'>
+								<CalendarMonthIcon className='text-secondary' fontSize='small' />
+								<span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Appointment</span>
+							</div>
+
+							<div className='d-flex ms-2 my-4 align-items-center'>
+								<ChatIcon className='text-secondary' fontSize='small' />
+								<span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Messages</span>
+							</div>
+
+
+						</div>
 					</div>
-					<Form className='container p-5 w-50'>
-						<ProgressBar striped animated variant='success' style={{color:'rgb(255, 229, 229)'}} now={(step / 3) * 100} />
-						{step === 1 && (
-							<Form.Group controlId='formStep1'>
-								<div className='p-5 d-flex flex-column align-items-center'>
-									<p className='fw-bold text-dark mb-5'>Link Adhaar Number</p>
-									<input
-										type='tel'
-										className='form-control py-3 border-2 fw-bold'
-										style={{ width: '400px', fontSize:'small'}}
-										id='mobile-number'
-										placeholder='Enter Adhaar Number'
-										size='10'
-										value={aadhaarNumber}
-										onChange={(e) => setaadhaarNumber(e.target.value)}></input>
 
-									<Button
-										variant='outlined'
-										style={{ color: '#4200FF' , borderColor:'#4200FF', fontSize:'small'}}
-										className='my-3 fw-bold text-capitalize'
-										onClick={handleAadhaarOTP}>
-										Send OTP
-									</Button>
-									{otpDialogState ? (
-										<>
-											<p className='text-muted mt-4 fw-bold'>Enter OTP</p>
+					<Divider className='mb-4' style={{ height: '2px' }} />
 
-											<div className='w-50'>
-												<OtpInput
-													value={otp}
-													onChange={setOtp}
-													numInputs={6}
-													renderInput={(props) => <input {...props} />}
-													inputStyle='m-2 fw-bold text-muted fs-3 w-100 border-1 rounded'
-													containerStyle='mx-5'
-												/>
-											</div>
-										</>
-									) : null}
+					<div className='ps-3'>
+						<div className='d-flex justify-content-between'>
+							<span className='fw-bold'>Profile</span>
+						</div>
 
-									{/* <Button variant="contained" style={{ backgroundColor: '#4200FF' }} className='my-3 fw-bold p-3 px-5 text-capitalize rounded-4'>Sign Up</Button> */}
-								</div>
-							</Form.Group>
-						)}
-						{step === 2 && (
-							<Form.Group controlId='formStep2'>
-								<div className='p-5 d-flex flex-column align-items-center '>
-									<p className='fw-bold text-dark mb-5'>Link Mobile Number</p>
-									{/* <label for="exampleFormControlInput1" class="form-label">Enter Mobile Number</label> */}
-									<input
-										type='tel'
-										className='form-control py-3 border-2 fw-bold'
-										style={{ width: '400px', fontSize:'small' }}
-										id='mobile-number'
-										placeholder='Enter Mobile Number'
-										size='10'
-										value={mobileNumber}
-										onChange={(e) => setMobileNumber(e.target.value)}></input>
+						<div className='py-2'>
+							<div className='d-flex ms-2 my-4 align-items-center'>
+								<PersonIcon className='text-secondary' fontSize='small' />
+								<span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Profile Settings</span>
+							</div>
 
-									<Button
-										variant='outlined'
-										style={{ color: '#4200FF' }}
-										className='my-3 fw-bold text-capitalize'
-										onClick={handleMobileOTP}>
-										Send OTP
-									</Button>
+							<div className='d-flex ms-2 my-4 align-items-center'>
+								<NotificationsActiveIcon className='text-secondary' fontSize='small' />
+								<span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Notification</span>
+							</div>
 
-									{otpDialogState ? (
-										<>
-											<p className='text-muted mt-4 fw-bold'>Enter OTP</p>
-											<div className='w-50'>
-												<OtpInput
-													value={otp}
-													onChange={setOtp}
-													numInputs={6}
-													// renderSeparator={<span>-</span>}
-													renderInput={(props) => <input {...props} />}
-													inputStyle='m-2 fw-bold text-muted fs-3 w-100 border-1 rounded'
-													containerStyle='mx-5'
-												// inputType='tel'
-												/>
-											</div>
-										</>
-									) : null}
+							<div className='d-flex ms-2 my-4 align-items-center'>
+								<SettingsIcon className='text-secondary' fontSize='small' />
+								<span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Help & Settings</span>
+							</div>
 
-									{/* <Button variant="contained" style={{ backgroundColor: '#4200FF' }} className='my-3 fw-bold p-3 px-5 text-capitalize rounded-4'>Sign Up</Button> */}
-								</div>
-							</Form.Group>
-						)}
-						{step === 3 && (
-							<Form.Group controlId='formStep3'>
-								<div className='w-100 px-5 mt-4 text-center'>
-									{/* <p className='fw-bold font-purple mb-2'>Generate ABHA Number</p> */}
-									<Box
-										sx={{
-											display: 'flex',
-											flexWrap: 'wrap',
-											justifyContent: 'center',
-											'& > :not(style)': {
-												m: 1,
-												width: 400,
-												height: 330,
-											},
-										}}>
-										<Paper elevation={3}>
-											<div className='bg-blue mb-4' style={{ height: '100px' }}>
-												<Avatar
-													className='border'
-													style={{
-														background: 'rgb(2,48,106)',
-														left: '95px',
-														top: '50px',
-														height: '80px',
-														width: '80px',
-													}}
-													alt='Remy Sharp'
-													src=''
-												/>
-											</div>
-											<div
-												className='d-flex pt-3 flex-column align-items-center justify-content-center'
-												style={{}}>
-												<QrCode2Icon style={{ height: '60px', width: '60px' }} />
-												<span className='fw-bold'>ABHA Number:</span>
-												{healthIdNumber ?
-												<span>{healthIdNumber}</span> :
-												<>
-													<Skeleton
-														className='mt-2 rounded'
-														animation='wave'
-														variant='rectangular'
-														width={200}
-														height={30}
+							<div className='d-flex ms-2 my-4 align-items-center'>
+								<InfoIcon className='text-secondary' fontSize='small' />
+								<span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>About DocSwift</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className='py-5 bg-signup'>
+					<div className='d-flex w-75 mx-auto border shadow-lg rounded rounded-4' style={{ background: 'rgb(255, 229, 229)' }}>
+						<div className='w-50 d-flex flex-column align-items-center justify-content-center rounded-start-4 border-end border-3'>
+							<img className='w-75 my-4' src={aadhaarImg2} />
+							<img className='w-75 my-4' src={aadhaarImg} />
+						</div>
+						<Form className='container p-5 w-50'>
+							<ProgressBar striped animated variant='success' style={{ color: 'rgb(255, 229, 229)' }} now={(step / 3) * 100} />
+							{step === 1 && (
+								<Form.Group controlId='formStep1'>
+									<div className='p-5 d-flex flex-column align-items-center'>
+										<p className='fw-bold text-dark mb-5'>Link Adhaar Number</p>
+										<input
+											type='tel'
+											className='form-control py-3 border-2 fw-bold'
+											style={{ width: '400px', fontSize: 'small' }}
+											id='mobile-number'
+											placeholder='Enter Adhaar Number'
+											size='10'
+											value={aadhaarNumber}
+											onChange={(e) => setaadhaarNumber(e.target.value)}></input>
+
+										<Button
+											variant='outlined'
+											style={{ color: '#4200FF', borderColor: '#4200FF', fontSize: 'small' }}
+											className='my-3 fw-bold text-capitalize'
+											onClick={handleAadhaarOTP}>
+											Send OTP
+										</Button>
+										{otpDialogState ? (
+											<>
+												<p className='text-muted mt-4 fw-bold'>Enter OTP</p>
+
+												<div className='w-50'>
+													<OtpInput
+														value={otp}
+														onChange={setOtp}
+														numInputs={6}
+														renderInput={(props) => <input {...props} />}
+														inputStyle='m-2 fw-bold text-muted fs-3 w-100 border-1 rounded'
+														containerStyle='mx-5'
 													/>
-													<Button
-														variant='outlined'
-														style={{ color: '#4200FF', borderColor: '#4200FF', fontSize: 'x-small' }}
-														className='mt-3 fw-bold px-3 py-2 text-capitalize rounded-2'
-														onClick={handleAbhaGeneration}>
-														Generate ABHA Number
-													</Button>
-													</>
-												}
-											</div>
-										</Paper>
-									</Box>
-								</div>
-							</Form.Group>
-						)}
-						<div className='d-flex justify-content-around'>
-							{step > 1 && (
+												</div>
+											</>
+										) : null}
+
+										{/* <Button variant="contained" style={{ backgroundColor: '#4200FF' }} className='my-3 fw-bold p-3 px-5 text-capitalize rounded-4'>Sign Up</Button> */}
+									</div>
+								</Form.Group>
+							)}
+							{step === 2 && (
+								<Form.Group controlId='formStep2'>
+									<div className='p-5 d-flex flex-column align-items-center '>
+										<p className='fw-bold text-dark mb-5'>Link Mobile Number</p>
+										{/* <label for="exampleFormControlInput1" class="form-label">Enter Mobile Number</label> */}
+										<input
+											type='tel'
+											className='form-control py-3 border-2 fw-bold'
+											style={{ width: '400px', fontSize: 'small' }}
+											id='mobile-number'
+											placeholder='Enter Mobile Number'
+											size='10'
+											value={mobileNumber}
+											onChange={(e) => setMobileNumber(e.target.value)}></input>
+
+										<Button
+											variant='outlined'
+											style={{ color: '#4200FF' }}
+											className='my-3 fw-bold text-capitalize'
+											onClick={handleMobileOTP}>
+											Send OTP
+										</Button>
+
+										{otpDialogState ? (
+											<>
+												<p className='text-muted mt-4 fw-bold'>Enter OTP</p>
+												<div className='w-50'>
+													<OtpInput
+														value={otp}
+														onChange={setOtp}
+														numInputs={6}
+														// renderSeparator={<span>-</span>}
+														renderInput={(props) => <input {...props} />}
+														inputStyle='m-2 fw-bold text-muted fs-3 w-100 border-1 rounded'
+														containerStyle='mx-5'
+													// inputType='tel'
+													/>
+												</div>
+											</>
+										) : null}
+
+										{/* <Button variant="contained" style={{ backgroundColor: '#4200FF' }} className='my-3 fw-bold p-3 px-5 text-capitalize rounded-4'>Sign Up</Button> */}
+									</div>
+								</Form.Group>
+							)}
+							{step === 3 && (
+								<Form.Group controlId='formStep3'>
+									<div className='w-100 px-5 mt-4 text-center'>
+										{/* <p className='fw-bold font-purple mb-2'>Generate ABHA Number</p> */}
+										<Box
+											sx={{
+												display: 'flex',
+												flexWrap: 'wrap',
+												justifyContent: 'center',
+												'& > :not(style)': {
+													m: 1,
+													width: 400,
+													height: 330,
+												},
+											}}>
+											<Paper elevation={3}>
+												<div className='bg-blue mb-4' style={{ height: '100px' }}>
+													<Avatar
+														className='border'
+														style={{
+															background: 'rgb(2,48,106)',
+															left: '95px',
+															top: '50px',
+															height: '80px',
+															width: '80px',
+														}}
+														alt='Remy Sharp'
+														src=''
+													/>
+												</div>
+												<div
+													className='d-flex pt-3 flex-column align-items-center justify-content-center'
+													style={{}}>
+													<QrCode2Icon style={{ height: '60px', width: '60px' }} />
+													<span className='fw-bold'>ABHA Number:</span>
+													{healthIdNumber ?
+														<span>{healthIdNumber}</span> :
+														<>
+															<Skeleton
+																className='mt-2 rounded'
+																animation='wave'
+																variant='rectangular'
+																width={200}
+																height={30}
+															/>
+															<Button
+																variant='outlined'
+																style={{ color: '#4200FF', borderColor: '#4200FF', fontSize: 'x-small' }}
+																className='mt-3 fw-bold px-3 py-2 text-capitalize rounded-2'
+																onClick={handleAbhaGeneration}>
+																Generate ABHA Number
+															</Button>
+														</>
+													}
+												</div>
+											</Paper>
+										</Box>
+									</div>
+								</Form.Group>
+							)}
+							{step === 4 && (
 								<Button
 									variant='outlined'
-									style={{ color: '#4200FF', borderColor:'#4200FF' }}
+									style={{ color: '#4200FF', borderColor: '#4200FF' }}
 									className='my-3 fw-bold text-capitalize'
-									onClick={handlePrevious}>
-									Previous
+									onClick={handleFetchModes}>
+									Initialize Care Context
 								</Button>
 							)}
-							{step < 3 ? (
-								<Button
-									variant='contained'
-									style={{ backgroundColor: '#4200FF' }}
-									className='my-3 fw-bold p-2 px-5 text-capitalize'
-									onClick={handleNext}>
-									Next
-								</Button>
-							) : (
-								<Button
-									variant='contained'
-									style={{ backgroundColor: '#4200FF' }}
-									className='my-3 fw-bold p-2 px-5 text-capitalize'
-									onClick={handleRegister}>
-									Register
-								</Button>
-							)}
-						</div>
-					</Form>
+							<div className='d-flex justify-content-around'>
+								{step > 1 && (
+									<Button
+										variant='outlined'
+										style={{ color: '#4200FF', borderColor: '#4200FF' }}
+										className='my-3 fw-bold text-capitalize'
+										onClick={handlePrevious}>
+										Previous
+									</Button>
+								)}
+								{step < 3 ? (
+									<Button
+										variant='contained'
+										style={{ backgroundColor: '#4200FF' }}
+										className='my-3 fw-bold p-2 px-5 text-capitalize'
+										onClick={handleNext}>
+										Next
+									</Button>
+								) : (
+									<Button
+										variant='contained'
+										style={{ backgroundColor: '#4200FF' }}
+										className='my-3 fw-bold p-2 px-5 text-capitalize'
+										onClick={handleRegister}>
+										Register
+									</Button>
+								)}
+							</div>
+						</Form>
+					</div>
 				</div>
 			</div>
 		</>
