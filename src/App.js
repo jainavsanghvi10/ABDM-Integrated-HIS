@@ -23,6 +23,7 @@ import StaffAdmin from './components/StaffAdmin';
 import CreateDocument from './components/CreateDocument';
 import HealthRecord from './components/HealthRecord';
 import TrashCopy from './components/TrashCopy';
+import CareContext from './components/CareContext';
 
 function App() {
   return (
@@ -55,6 +56,8 @@ function App() {
         <Route path='/create-document' element={<CreateDocument/>} />
         <Route path='/health-record' element={<HealthRecord/>} />
         <Route path='/test' element={<TrashCopy/>}/>
+
+        <Route path='care-context' element={<CareContext/>}/>
 
       </Routes>
       </AuthProvider>

@@ -53,7 +53,7 @@ td, th{
 }
 
 .font-small{
-  font-size: small;
+  font-size: small !important;
 }
 
 .w-sidebar{
