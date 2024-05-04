@@ -32,7 +32,7 @@ hr {
   background: rgb(2,48,106);
 }
 .bg-purple{
-  background: rgb(76, 77, 220);
+  background: rgb(76, 77, 220) !important;
 }
 
 .bg-trans-blue{

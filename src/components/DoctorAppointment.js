@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef  } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 
@@ -53,6 +53,10 @@ const DoctorAppointment = () => {
     const [docId, setDocId] = useState(null)
     const [appointmentList, setAppointmentList] = useState([])
     const [patientCardElement, setPatientCardElement] = useState([]);
+    const [selectedFile, setSelectedFile] = useState(null);
+	const [fileName, setFileName] = useState('');
+	const [patientId, setPatientId] = useState('PID-1');
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         const fetchStaffByToken = async (token) => {
@@ -87,6 +91,47 @@ const DoctorAppointment = () => {
         if (docId != null)
             fetchAppointments();
     }, [docId])
+
+	// const handleFileChange = (e) => {
+	// 	console.log(e.target.files[0]);
+	// 	// console.log(selectedFile);
+	// 	setSelectedFile(e.target.files[0]);
+	// 	setFileName(e.target.files[0].name);
+	// };
+
+	const handleUpload = async (e) => {
+		e.preventDefault();
+        console.log('Uploading File...');
+        console.log(fileInputRef.current.files[0]);
+		if(fileInputRef.current.files.length==0){
+            console.log('No file selected');
+            return;
+        }
+        
+		const formData = new FormData();
+		formData.append('file', fileInputRef.current.files[0]);
+    	formData.append('fileName', fileInputRef.current.files[0].name);
+		formData.append('patientId', patientId);
+		console.log(formData);
+		try {
+			const response = await axios.post(
+				'http://localhost:8086/Team-10/medicalRecord/store-record',
+				formData,
+				{
+					headers: {
+						'Content-Type': 'multipart/form-data',
+					},
+				}
+			);
+
+			console.log(response.data);
+            // Reset the file input:
+            fileInputRef.current.value = ''; 
+		} catch (error) {
+			console.error('Error uploading file:', error);
+            fileInputRef.current.value = ''; 
+		}
+	};
 
     async function fetchAppointments() {
         try {
@@ -160,15 +205,36 @@ const DoctorAppointment = () => {
                             Cough and Cold
                         </p>
                         {/* <input class="form-control" type="file" id="formFile"></input> */}
-                        <Fab className='me-4 rounded' variant="extended" size="small" color='primary'>
+                        {/* <Fab className='me-4 rounded' variant="extended" size="small" color='primary'>
                             <UploadIcon className='ms-1' sx={{ mr: 1 }} fontSize='small' />
                             <span className='fw-bold me-2' style={{ fontSize: '11px', textTransform: 'capitalize' }}>Upload</span>
-                        </Fab>
+                        </Fab> */}
+                        <form onSubmit={handleUpload}>
+							<div className='py-3' style={{ display: 'flex', alignItems: 'center' }}>
+								<input
+									className='form-control w-50'
+									type='file'
+									id='formFile'
+									// onChange={handleFileChange}
+                                    ref={fileInputRef} 
+								/>
+								<Fab
+									className='me-4 rounded bg-purple text-white' variant="extended" size="small"
+									type='submit'
+								>
+									<UploadIcon
+										className='ms-1' sx={{ mr: 1 }} fontSize='small' 
+									/>
+									Upload
+                                     {/* <span className='fw-bold me-2' style={{ fontSize: '11px', textTransform: 'capitalize' }}>Upload</span> */}
+								</Fab>
+							</div>
+						</form>
                         <Button
                             variant="outlined"
                             color='secondary'
-                            size='small'
-                            style={{ textTransform: 'capitalize', color: 'black', borderColor: 'black' }}
+                            style={{ textTransform: 'capitalize', color: '#4200FF', borderColor: '#4200FF' }}
+                            className='p-3 my-4 fw-bold'
                             onClick={() => { handleAppointmentStatus(a) }}
                         >Appointment Completed</Button>
                     </AccordionDetails>
