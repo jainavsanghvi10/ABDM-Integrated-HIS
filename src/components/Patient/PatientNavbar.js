@@ -14,7 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import Skeleton from '@mui/material/Skeleton';
 
-const pages = ['Products', 'Pricing', 'Blog'];
+const pages = [''];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function PatientNavbar() {
@@ -56,7 +56,7 @@ function PatientNavbar() {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            HMIS
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -112,7 +112,7 @@ function PatientNavbar() {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            HMIS
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (

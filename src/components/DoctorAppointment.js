@@ -6,7 +6,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 
-import docicon from '../assets/images/small_devils_logo.png'
+import docicon from '../assets/images/HEARTLOGO.png'
 import Divider from '@mui/material/Divider';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
@@ -24,6 +24,7 @@ import Chip from '@mui/material/Chip';
 import Fab from '@mui/material/Fab';
 import UploadIcon from '@mui/icons-material/Upload';
 import Switch from '@mui/material/Switch';
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -223,8 +224,8 @@ const DoctorAppointment = () => {
                             </p>
                             {/* <input class="form-control" type="file" id="formFile"></input> */}
                             <Fab className='me-4 rounded' variant="extended" size="small" color='primary'>
-                                <UploadIcon className='ms-1' sx={{ mr: 1 }} fontSize='small' />
-                                <span className='fw-bold me-2' style={{ fontSize: '11px', textTransform: 'capitalize' }}>Upload</span>
+                                <NoteAddIcon className='ms-1' sx={{ mr: 1 }} fontSize='small' />
+                                <span className='fw-bold me-2' style={{ fontSize: '11px', textTransform: 'capitalize' }}>Create Document</span>
                             </Fab>
                             <Button variant="outlined" color='secondary' size='small' style={{ textTransform: 'capitalize', color: 'black', borderColor: 'black' }}>Appointment Completed</Button>
                         </AccordionDetails>

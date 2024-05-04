@@ -51,3 +51,7 @@ hr {
 td, th{
   font-size: small;
 }
+
+.font-small{
+  font-size: small;
+}

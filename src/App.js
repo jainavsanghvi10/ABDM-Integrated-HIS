@@ -20,6 +20,8 @@ import UserLogin from './components/UserLogin';
 import DoctorAppointment from './components/DoctorAppointment';
 import PickSlot from './components/PickSlot';
 import StaffAdmin from './components/StaffAdmin';
+import CreateDocument from './components/CreateDocument';
+import HealthRecord from './components/HealthRecord';
 
 function App() {
   return (
@@ -48,6 +50,9 @@ function App() {
 
         <Route path="/abha-generator" element={<ABHAGenerator/>} />
         <Route path='/staff-admin' element={<StaffAdmin/>}/>
+
+        <Route path='/create-document' element={<CreateDocument/>} />
+        <Route path='/health-record' element={<HealthRecord/>} />
       </Routes>
       </AuthProvider>
     </Router>
