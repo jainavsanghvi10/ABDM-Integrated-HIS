@@ -285,8 +285,25 @@ const DoctorAppointment = () => {
         navigate('/user-login');
     }
 
+    async function handleFileFetch(){
+        const baseUrl86 = "https://q24csh3m-8086.inc1.devtunnels.ms/"
+        const baseUrl87 = "https://q24csh3m-8087.inc1.devtunnels.ms/"
+
+        const dataPushResponse = await axios.post("http://localhost:8087/request-data-share-url");
+        console.log(dataPushResponse.data)
+        const data = {
+            "recordReferences": ["MED-RECORD-1", "MED-RECORD-2"],
+            "url": dataPushResponse.data.url
+        }
+
+        const response = await axios.post(baseUrl86 + "transfer/get-fhir-bundle", data);
+
+        console.log(response.data);
+    }
+
     return (
         <>
+        <button onClick={handleFileFetch}>Fetch Fhir</button>
             <div>
                 <div className="px-3 py-3 d-flex align-items-center justify-content-between border-bottom border-3">
                     <div className='d-flex align-items-center'>
