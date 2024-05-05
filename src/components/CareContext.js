@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import { useNavigate } from "react-router-dom";
 import { Form, ProgressBar } from 'react-bootstrap';
 import axios from 'axios';
@@ -36,201 +36,96 @@ import PersonIcon from '@mui/icons-material/Person';
 import InfoIcon from '@mui/icons-material/Info';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import SettingsIcon from '@mui/icons-material/Settings';
+import TokenIcon from '@mui/icons-material/Token';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import ListIcon from '@mui/icons-material/List';
+import TodayIcon from '@mui/icons-material/Today';
+import Typography from '@mui/material/Typography';
+import { Input } from '@mui/material';
 
 const CareContext = () => {
     const [step, setStep] = useState(1);
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({});
-    const [aadhaarNumber, setaadhaarNumber] = useState(undefined);
-    const [mobileNumber, setMobileNumber] = useState(undefined);
+
+    const [abhaAddress, setAbhaAddress] = useState('');
     const [otp, setOtp] = useState('');
-    const [txnId, setTxnId] = useState('');
-    const [healthIdNumber, setHealthIdNumber] = useState('');
-    // const [publicKey, setPublicKey] = useState('');
-    const [otpDialogState, setOtpDialogState] = useState(false);
+    const [json, setJson] = useState(null);
+    const [authMode, setAuthMode] = useState("MOBILE_OTP");
 
-    // useEffect(() => {
-    // const fetchPublicKey = async () => {
-    //     try {
-    //         const response = await axios.post('http://localhost:8087/abhaGenerator/publicKey');
-    //         const publicKeyData = response.data; // Assuming the response contains a publicKey field
-    //         console.log('Public Key:', publicKeyData);
-    //         setPublicKey(publicKeyData);
-    //     } catch (error) {
-    //         console.error('Error fetching public key:', error);
-    //     }
-    // };
-
-    // fetchPublicKey();
-    // }, []);
-
-    const encrypt = (plainText) => {
-        const encryptor = new JSEncrypt();
-        const publicKey = `-----BEGIN PUBLIC KEY-----
-        MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAstWB95C5pHLXiYW59qyO4Xb+59KYVm9Hywbo77qETZVAyc6VIsxU+UWhd/k/YtjZibCznB+HaXWX9TVTFs9Nwgv7LRGq5uLczpZQDrU7dnGkl/urRA8p0Jv/f8T0MZdFWQgks91uFffeBmJOb58u68ZRxSYGMPe4hb9XXKDVsgoSJaRNYviH7RgAI2QhTCwLEiMqIaUX3p1SAc178ZlN8qHXSSGXvhDR1GKM+y2DIyJqlzfik7lD14mDY/I4lcbftib8cv7llkybtjX1AayfZp4XpmIXKWv8nRM488/jOAF81Bi13paKgpjQUUuwq9tb5Qd/DChytYgBTBTJFe7irDFCmTIcqPr8+IMB7tXA3YXPp3z605Z6cGoYxezUm2Nz2o6oUmarDUntDhq/PnkNergmSeSvS8gD9DHBuJkJWZweG3xOPXiKQAUBr92mdFhJGm6fitO5jsBxgpmulxpG0oKDy9lAOLWSqK92JMcbMNHn4wRikdI9HSiXrrI7fLhJYTbyU3I4v5ESdEsayHXuiwO/1C8y56egzKSw44GAtEpbAkTNEEfK5H5R0QnVBIXOvfeF4tzGvmkfOO6nNXU3o/WAdOyV3xSQ9dqLY5MEL4sJCGY1iJBIAQ452s8v0ynJG5Yq+8hNhsCVnklCzAlsIzQpnSVDUVEzv17grVAw078CAwEAAQ==
-                            -----END PUBLIC KEY-----`;
-        encryptor.setPublicKey(publicKey);
-        const ciphertext = encryptor.encrypt(plainText);
-        return ciphertext;
-    };
-
-    const handleAadhaarOTP = async () => {
-        try {
-            // Encrypt Aadhaar number
-            let encryptedAadhaarNumber = encrypt(aadhaarNumber);
-            const data = {
-                aadhaar: encryptedAadhaarNumber,
-            };
-
-            // POST request to the server API
-            const response = await axios.post(
-                'http://localhost:8087/abhaGenerator/generateOTP',
-                data
-            );
-            setOtpDialogState(true);
-            const txnId = response.data;
-            setTxnId(txnId);
+    
+    async function fetchData() {
+        try{
+            console.log("fetching...")
+            const response = await axios.get('http://localhost:8087/temp/get-all');
+            const deleteResponse = await axios.delete('http://localhost:8087/temp/delete-all');
+            console.log(deleteResponse.data);
+            const parsedData = JSON.parse(response.data[response.data.length-1]["jsonString"])
+            console.log(parsedData);
+            setJson(parsedData);
         } catch (error) {
-            alert('Invalid');
+            alert('Cannot Fetch');
         }
-    };
+    }
 
-    const handleMobileOTP = () => {
-        const data = {
-            mobile: parseInt(mobileNumber),
-            txnId: txnId,
-        };
-
-        // POST request to the server API
-        axios
-            .post('http://localhost:8087/abhaGenerator/generateMobileOTP', data)
-            .then((response) => {
-                response = response.data;
-                const txnId = response.txnId;
-                // setTxnId(txnId);
-                if (!response.mobileLinked) {
-                    setOtpDialogState(true);
-                } else {
-                    alert('Mobile Number already linked');
-                }
-            })
-            .catch((error) => {
-                alert('Invalid');
-            });
-    };
-
-    const handleAbhaGeneration = () => {
-        const data = {
-            txnId: txnId,
-        };
-
-        // POST request to the server API
-        axios
-            .post('http://localhost:8087/abhaGenerator/generateAbhaNumber', data)
-            .then((response) => {
-                const healthId = response.data;
-                setHealthIdNumber(healthId);
-                // console.log('Health ID Number:', healthId);
-                alert('Your Health ID / ABHA Number is ', healthId);
-            })
-            .catch((error) => {
-                alert('Invalid');
-            });
-    };
-
-    const handleNext = () => {
-        if (step == 1) {
-            let encryptedOTP = encrypt(otp);
-            let data = {
-                otp: encryptedOTP,
-                txnId: txnId,
-            };
-            // POST request to the server API
-            if (otpDialogState) {
-                axios
-                    .post('http://localhost:8087/abhaGenerator/verifyOTP', data)
-                    .then((response) => {
-                        const txnId = response.data;
-                        // setTxnId(txnId);
-                        // console.log('Transaction ID:', txnId);
-                    })
-                    .catch((error) => {
-                        alert('Invalid OTP');
-                    });
+    async function handleNext(){
+        if(step == 1){
+            console.log("initializing...");
+            const data = {
+                "id": abhaAddress,
+                "purpose": "KYC_AND_LINK",
+                "requesterType": "HIP",
+                "requesterId": "IN0610089630"
             }
-            setOtpDialogState(false);
-            setStep(step + 1);
-        } else {
-            // console.log(mobileNumber);
-            let encryptedOTP = encrypt(otp);
-            let data = {
-                otp: encryptedOTP,
-                txnId: txnId,
-            };
-            // POST request to the server API
-            if (otpDialogState) {
-                axios
-                    .post('http://localhost:8087/abhaGenerator/verifyMobileOTP', data)
-                    .then((response) => {
-                        const txnId = response.data;
-                        // setTxnId(txnId);
-                        // console.log('Transaction ID:', txnId)
-                    })
-                    .catch((error) => {
-                        alert('Invalid OTP');
-                    });
-            }
-            setOtpDialogState(false);
-            setStep(step + 1);
+            await axios.post('http://localhost:8087/record-to-abha-link/auth/fetch-modes', data)
+                .then((response) => {
+                    setTimeout(fetchData, 5000);
+                    setStep(step + 1);
+                })
+                .catch((error) => {
+                    alert('Care Context Not Initialized');
+            });
         }
-    };
-
-    const handlePrevious = () => {
-        setStep(step - 1);
-        setOtpDialogState(false);
-    };
-
-    const handleRegister = () => {
-        navigate('/patient/register')
-    }
-
-    const handleFetchModes = (e) => {
-        e.preventDefault()
-        console.log("init")
-        let data = {
-            id: "dhanvi.b1@sbx",
-            purpose: "KYC_AND_LINK",
-            requesterType: "HIP",
-            requesterId: "IN0610089593"
-        };
-        axios.post('http://localhost:8087/auth/fetch-modes', data)
+        if(step == 2){
+            const data = {
+                "id": abhaAddress,
+                "purpose": "KYC_AND_LINK",
+                "requesterType": "HIP",
+                "requesterId": "IN0610089630",
+                "authMode": authMode,
+                "requestId": json["requestId"]
+            }
+        
+            await axios.post('http://localhost:8087/record-to-abha-link/auth/init', data)
+                .then((response) => {
+                    setTimeout(fetchData, 5000);
+                    setStep(step + 1);
+                })
+                .catch((error) => {
+                    alert('OTP not sent');
+            });
+        }
+    } 
+    async function handleComplete(){
+        const data = {
+            "requestId": json["requestId"],
+            "otp": otp
+        }
+        await axios.post('http://localhost:8087/record-to-abha-link/auth/confirm', data)
             .then((response) => {
-                console.log(response);
+                console.log(response.data)
             })
             .catch((error) => {
-                alert('Init failed');
-            });
+                alert('Otp Incorrect or Expired');
+        });
     }
-    const handleInit = (e) => {
-        e.preventDefault()
-        console.log("init")
-        let data = {
-            id: "dhanvi.b1@sbx",
-            purpose: "KYC_AND_LINK",
-            requesterType: "HIP",
-            requesterId: "IN0610089593"
-        };
-        axios.post('http://localhost:8087/auth/init', data)
-            .then((response) => {
-                console.log(response);
-            })
-            .catch((error) => {
-                alert('Init failed');
-            });
-    }
+
+	const handlePrevious = () => {
+		setStep(step - 1);
+	};
+
     function handleLogout() {
         localStorage.removeItem('token');
-        window.location.reload();
+        navigate('/user-login');
     }
 
     return (
@@ -240,10 +135,9 @@ const CareContext = () => {
                     <img height='30px' src={docicon} />
                     <h5 className="fw-bold mb-0 ms-2">DocSwift</h5>
                 </div>
-                <Button className='d-flex ms-2 align-items-center' style={{ borderColor: '#4200FF' }} variant="outlined"
-                    onClick={handleLogout}>
+                <Button className='d-flex ms-2 align-items-center' style={{ borderColor: '#4200FF' }} variant="outlined">
                     <LogoutIcon className='font-purple' fontSize='small' />
-                    <span className='ms-3 fw-bold font-purple' style={{ fontSize: 'small' }}>Logout</span>
+                    <span className='ms-3 fw-bold font-purple' onClick={handleLogout} style={{ fontSize: 'small' }}>Logout</span>
                 </Button>
             </div>
             <div className="d-flex">
@@ -255,26 +149,55 @@ const CareContext = () => {
                             <MoreVertIcon fontSize='small' />
                         </div>
                         <div className='py-2'>
-                            <div className='d-flex ms-2 my-4 align-items-center'>
+                            <div className='d-flex ms-2 my-4 align-items-center' 
+                            style={{ cursor: 'pointer' }}
+                            onClick={()=>{navigate('/abha-generator')}}
+                            >
                                 <DashboardRoundedIcon className='text-secondary' fontSize='small' />
-                                <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Dashboard</span>
+                                <Typography variant="body2" component="span" className='ms-3' style={{ fontSize: 'small', color: 'text.secondary' }}>
+                                    ABHA Number
+                                </Typography>
                             </div>
 
-                            <div className='d-flex ms-2 my-4 align-items-center'>
-                                <WheelchairPickupIcon className='text-secondary' fontSize='small' />
-                                <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Top Doctor's</span>
+                            <div className='d-flex ms-2 my-4 align-items-center' 
+                            style={{ cursor: 'pointer' }}
+                            onClick={()=>{navigate('/care-context')}}
+                            >
+                                <TokenIcon className='text-secondary' fontSize='small' />
+                                <Typography variant="body2" component="span" className='ms-3' fontWeight="bold" style={{ fontSize: 'small', color: 'text.secondary' }}>
+                                    Care Context Token
+                                </Typography>
+                            </div>
+                            
+                            <div className='d-flex ms-2 my-4 align-items-center' 
+                            style={{ cursor: 'pointer' }}
+                            onClick={()=>{navigate('/patient/register')}}
+                            >
+                                <HowToRegIcon className='text-secondary' fontSize='small' />
+                                <Typography variant="body2" component="span" className='ms-3' style={{ fontSize: 'small', color: 'text.secondary' }}>
+                                    Register Patient
+                                </Typography>
                             </div>
 
-                            <div className='d-flex ms-2 my-4 align-items-center'>
-                                <CalendarMonthIcon className='text-secondary' fontSize='small' />
-                                <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Appointment</span>
+                            <div className='d-flex ms-2 my-4 align-items-center' 
+                            style={{ cursor: 'pointer' }}
+                            onClick={()=>{navigate('/doctors-list')}}
+                            >
+                                <ListIcon className='text-secondary' fontSize='small' />
+                                <Typography variant="body2" component="span" className='ms-3' style={{ fontSize: 'small', color: 'text.secondary' }}>
+                                Doctor List
+                                </Typography>
                             </div>
-
-                            <div className='d-flex ms-2 my-4 align-items-center'>
-                                <ChatIcon className='text-secondary' fontSize='small' />
-                                <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Messages</span>
+                            
+                            <div className='d-flex ms-2 my-4 align-items-center' 
+                            style={{ cursor: 'pointer' }}
+                            onClick={()=>{navigate('/pick-slot')}}
+                            >
+                                <TodayIcon className='text-secondary' fontSize='small' />
+                                <Typography variant="body2" component="span" className='ms-3' style={{ fontSize: 'small', color: 'text.secondary' }}>
+                                    Appointment Booking
+                                </Typography>
                             </div>
-
 
                         </div>
                     </div>
@@ -322,68 +245,35 @@ const CareContext = () => {
                                     <div className='p-5 d-flex flex-column align-items-center'>
                                         <p className='fw-bold text-dark mb-3'>Initialize Care Context</p>
 
+                                        <Input onChange={(e)=>{setAbhaAddress(e.target.value)}} placeholder='ABHA address'/>
+                                    </div>
+                                </Form.Group>
+                            )}
+                            {step === 2 && (
+                                <Form.Group controlId='formStep1'>
+                                    <div className='p-5 d-flex flex-column align-items-center'>
+                                        <p className='fw-bold text-dark mb-3'>Initialize Care Context</p>
+
                                         <FormControl>
                                             <RadioGroup
                                                 aria-labelledby="demo-radio-buttons-group-label"
                                                 defaultValue="female"
                                                 name="radio-buttons-group"
                                                 style={{ fontSize: 'small', fontFamily: 'Montserrat' }}
+                                                value={authMode}
+                                                onChange={(e)=>{setAuthMode(e.target.value)}}
                                             >
-                                                <FormControlLabel style={{ fontSize: 'small', fontFamily: 'Montserrat' }} value="female" control={<Radio />} label="Female" />
-                                                <FormControlLabel style={{ fontSize: 'small', fontFamily: 'Montserrat' }} value="male" control={<Radio />} label="Male" />
+                                                <FormControlLabel style={{ fontSize: 'small', fontFamily: 'Montserrat' }} value="DEMOGRAPHICS" control={<Radio />} label="DEMOGRAPHICS" />
+                                                <FormControlLabel style={{ fontSize: 'small', fontFamily: 'Montserrat' }} value="MOBILE_OTP" control={<Radio />} label="MOBILE_OTP" />
                                             </RadioGroup>
                                         </FormControl>
-
-                                        <Button
-                                            variant='outlined'
-                                            style={{ color: '#4200FF', borderColor: '#4200FF', fontSize: 'small' }}
-                                            className='my-3 fw-bold text-capitalize'
-                                            onClick={handleAadhaarOTP}>
-                                            INIT
-                                        </Button>
-                                        {otpDialogState ? (
-                                            <>
-                                                <p className='text-muted mt-4 fw-bold'>Enter OTP</p>
-
-                                                <div className='w-50'>
-                                                    <OtpInput
-                                                        value={otp}
-                                                        onChange={setOtp}
-                                                        numInputs={6}
-                                                        renderInput={(props) => <input {...props} />}
-                                                        inputStyle='m-2 fw-bold text-muted fs-3 w-100 border-1 rounded'
-                                                        containerStyle='mx-5'
-                                                    />
-                                                </div>
-                                            </>
-                                        ) : null}
-
-                                        {/* <Button variant="contained" style={{ backgroundColor: '#4200FF' }} className='my-3 fw-bold p-3 px-5 text-capitalize rounded-4'>Sign Up</Button> */}
                                     </div>
                                 </Form.Group>
                             )}
-                            {step === 2 && (
+                            {step === 3 && (
                                 <Form.Group controlId='formStep2'>
                                     <div className='p-5 d-flex flex-column align-items-center '>
-                                        <p className='fw-bold text-dark mb-5'>Link Mobile Number</p>
-                                        {/* <label for="exampleFormControlInput1" class="form-label">Enter Mobile Number</label> */}
-                                        {/* <input
-                                            type='tel'
-                                            className='form-control py-3 border-2 fw-bold'
-                                            style={{ width: '400px', fontSize: 'small' }}
-                                            id='mobile-number'
-                                            placeholder='Enter Mobile Number'
-                                            size='10'
-                                            value={mobileNumber}
-                                            onChange={(e) => setMobileNumber(e.target.value)}></input> */}
-
-                                        <Button
-                                            variant='outlined'
-                                            style={{ color: '#4200FF' }}
-                                            className='mb-3 fw-bold text-capitalize'
-                                            onClick={handleMobileOTP}>
-                                            Send OTP
-                                        </Button>
+                                        <p className='fw-bold text-dark mb-5'>Otp Validation</p>
 
                                         <p className='text-muted mt-4 fw-bold'>Enter OTP</p>
                                         <div className='w-100'>
@@ -391,15 +281,11 @@ const CareContext = () => {
                                                 value={otp}
                                                 onChange={setOtp}
                                                 numInputs={6}
-                                                // renderSeparator={<span>-</span>}
                                                 renderInput={(props) => <input {...props} />}
                                                 inputStyle='mx-1 fw-bold text-muted fs-3 w-100 border-1 rounded'
                                                 containerStyle=''
-                                            // inputType='tel'
                                             />
                                         </div>
-
-                                        {/* <Button variant="contained" style={{ backgroundColor: '#4200FF' }} className='my-3 fw-bold p-3 px-5 text-capitalize rounded-4'>Sign Up</Button> */}
                                     </div>
                                 </Form.Group>
                             )}
@@ -413,12 +299,13 @@ const CareContext = () => {
                                         Previous
                                     </Button>
                                 )}
-                                {step < 2 ? (
+                                {step < 3 ? (
                                     <Button
                                         variant='contained'
                                         style={{ backgroundColor: '#4200FF' }}
                                         className='my-3 fw-bold p-2 px-5 text-capitalize'
-                                        onClick={handleNext}>
+                                        onClick={handleNext}
+                                        >
                                         Next
                                     </Button>
                                 ) : (
@@ -426,8 +313,9 @@ const CareContext = () => {
                                         variant='contained'
                                         style={{ backgroundColor: '#4200FF' }}
                                         className='my-3 fw-bold p-2 px-5 text-capitalize'
-                                        onClick={handleRegister}>
-                                        Register
+                                        onClick={handleComplete}
+                                        >
+                                        Complete
                                     </Button>
                                 )}
                             </div>

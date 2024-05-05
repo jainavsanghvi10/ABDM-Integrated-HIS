@@ -57,7 +57,7 @@ function App() {
         <Route path='/health-record' element={<HealthRecord/>} />
         <Route path='/test' element={<TrashCopy/>}/>
 
-        <Route path='care-context' element={<CareContext/>}/>
+        <Route path='/care-context' element={<CareContext/>}/>
 
       </Routes>
       </AuthProvider>

@@ -30,6 +30,11 @@ import PersonIcon from '@mui/icons-material/Person';
 import InfoIcon from '@mui/icons-material/Info';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import SettingsIcon from '@mui/icons-material/Settings';
+import TokenIcon from '@mui/icons-material/Token';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import ListIcon from '@mui/icons-material/List';
+import TodayIcon from '@mui/icons-material/Today';
+import Typography from '@mui/material/Typography';
 
 const Generator = () => {
 	const [step, setStep] = useState(1);
@@ -222,10 +227,11 @@ const Generator = () => {
 				alert('Init failed');
 			});
 	}
+	
 	function handleLogout() {
-		localStorage.removeItem('token');
-		window.location.reload();
-	}
+        localStorage.removeItem('token');
+        navigate('/user-login');
+    }
 
 	return (
 		<>
@@ -243,35 +249,64 @@ const Generator = () => {
 			<div className="d-flex">
 				<div className="w-sidebar pt-4 border-end border-3">
 
-					<div className='px-3'>
-						<div className='d-flex justify-content-between'>
-							<span className='fw-bold'>Primary Menu</span>
-							<MoreVertIcon fontSize='small' />
-						</div>
-						<div className='py-2'>
-							<div className='d-flex ms-2 my-4 align-items-center'>
-								<DashboardRoundedIcon className='text-secondary' fontSize='small' />
-								<span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Dashboard</span>
-							</div>
+				<div className='px-3'>
+                        <div className='d-flex justify-content-between'>
+                            <span className='fw-bold'>Primary Menu</span>
+                            <MoreVertIcon fontSize='small' />
+                        </div>
+                        <div className='py-2'>
+                            <div className='d-flex ms-2 my-4 align-items-center' 
+                            style={{ cursor: 'pointer' }}
+                            onClick={()=>{navigate('/abha-generator')}}
+                            >
+                                <DashboardRoundedIcon className='text-secondary' fontSize='small' />
+                                <Typography variant="body2" component="span" className='ms-3' fontWeight="bold" style={{ fontSize: 'small', color: 'text.secondary' }}>
+                                    ABHA Number
+                                </Typography>
+                            </div>
 
-							<div className='d-flex ms-2 my-4 align-items-center'>
-								<WheelchairPickupIcon className='text-secondary' fontSize='small' />
-								<span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Top Doctor's</span>
-							</div>
+                            <div className='d-flex ms-2 my-4 align-items-center' 
+                            style={{ cursor: 'pointer' }}
+                            onClick={()=>{navigate('/care-context')}}
+                            >
+                                <TokenIcon className='text-secondary' fontSize='small' />
+                                <Typography variant="body2" component="span" className='ms-3' style={{ fontSize: 'small', color: 'text.secondary' }}>
+                                    Care Context Token
+                                </Typography>
+                            </div>
+                            
+                            <div className='d-flex ms-2 my-4 align-items-center' 
+                            style={{ cursor: 'pointer' }}
+                            onClick={()=>{navigate('/patient/register')}}
+                            >
+                                <HowToRegIcon className='text-secondary' fontSize='small' />
+                                <Typography variant="body2" component="span" className='ms-3' style={{ fontSize: 'small', color: 'text.secondary' }}>
+                                    Register Patient
+                                </Typography>
+                            </div>
 
-							<div className='d-flex ms-2 my-4 align-items-center'>
-								<CalendarMonthIcon className='text-secondary' fontSize='small' />
-								<span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Appointment</span>
-							</div>
+                            <div className='d-flex ms-2 my-4 align-items-center' 
+                            style={{ cursor: 'pointer' }}
+                            onClick={()=>{navigate('/doctors-list')}}
+                            >
+                                <ListIcon className='text-secondary' fontSize='small' />
+                                <Typography variant="body2" component="span" className='ms-3' style={{ fontSize: 'small', color: 'text.secondary' }}>
+                                Doctor List
+                                </Typography>
+                            </div>
+                            
+                            <div className='d-flex ms-2 my-4 align-items-center' 
+                            style={{ cursor: 'pointer' }}
+                            onClick={()=>{navigate('/pick-slot')}}
+                            >
+                                <TodayIcon className='text-secondary' fontSize='small' />
+                                <Typography variant="body2" component="span" className='ms-3' style={{ fontSize: 'small', color: 'text.secondary' }}>
+                                    Appointment Booking
+                                </Typography>
+                            </div>
 
-							<div className='d-flex ms-2 my-4 align-items-center'>
-								<ChatIcon className='text-secondary' fontSize='small' />
-								<span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Messages</span>
-							</div>
-
-
-						</div>
-					</div>
+                        </div>
+                    </div>
 
 					<Divider className='mb-4' style={{ height: '2px' }} />
 

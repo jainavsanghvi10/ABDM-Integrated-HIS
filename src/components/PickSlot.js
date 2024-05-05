@@ -33,6 +33,12 @@ import PersonIcon from '@mui/icons-material/Person';
 import InfoIcon from '@mui/icons-material/Info';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import SettingsIcon from '@mui/icons-material/Settings';
+import TokenIcon from '@mui/icons-material/Token';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import ListIcon from '@mui/icons-material/List';
+import TodayIcon from '@mui/icons-material/Today';
+import Typography from '@mui/material/Typography';
+import { useNavigate } from 'react-router-dom';
 
 // const shouldDisableTime = (value, view) => {
 //     const hour = value.hour();
@@ -54,10 +60,15 @@ const PickSlot = () => {
     const [docAge, setDocAge] = useState(null);
     const [patientId, setPatientId] = useState(null);
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         setStaffId(urlParams.get('id'));
+        if(!urlParams.get('id')){
+            navigate('/doctors-list')
+        }
     }, [])
     useEffect(() => {
         fetchStaffById();
@@ -136,7 +147,7 @@ const PickSlot = () => {
 
     function handleLogout() {
         localStorage.removeItem('token');
-        window.location.reload();
+        navigate('/user-login');
     }
 
 
@@ -156,32 +167,61 @@ const PickSlot = () => {
             <div className="d-flex">
                 <div className="w-sidebar pt-4 border-end border-3">
 
-                    <div className='px-3'>
+                <div className='px-3'>
                         <div className='d-flex justify-content-between'>
                             <span className='fw-bold'>Primary Menu</span>
                             <MoreVertIcon fontSize='small' />
                         </div>
                         <div className='py-2'>
-                            <div className='d-flex ms-2 my-4 align-items-center'>
+                            <div className='d-flex ms-2 my-4 align-items-center' 
+                            style={{ cursor: 'pointer' }}
+                            onClick={()=>{navigate('/abha-generator')}}
+                            >
                                 <DashboardRoundedIcon className='text-secondary' fontSize='small' />
-                                <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Dashboard</span>
+                                <Typography variant="body2" component="span" className='ms-3' style={{ fontSize: 'small', color: 'text.secondary' }}>
+                                    ABHA Number
+                                </Typography>
                             </div>
 
-                            <div className='d-flex ms-2 my-4 align-items-center'>
-                                <WheelchairPickupIcon className='text-secondary' fontSize='small' />
-                                <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Top Doctor's</span>
+                            <div className='d-flex ms-2 my-4 align-items-center' 
+                            style={{ cursor: 'pointer' }}
+                            onClick={()=>{navigate('/care-context')}}
+                            >
+                                <TokenIcon className='text-secondary' fontSize='small' />
+                                <Typography variant="body2" component="span" className='ms-3' style={{ fontSize: 'small', color: 'text.secondary' }}>
+                                    Care Context Token
+                                </Typography>
+                            </div>
+                            
+                            <div className='d-flex ms-2 my-4 align-items-center' 
+                            style={{ cursor: 'pointer' }}
+                            onClick={()=>{navigate('/patient/register')}}
+                            >
+                                <HowToRegIcon className='text-secondary' fontSize='small' />
+                                <Typography variant="body2" component="span" className='ms-3' style={{ fontSize: 'small', color: 'text.secondary' }}>
+                                    Register Patient
+                                </Typography>
                             </div>
 
-                            <div className='d-flex ms-2 my-4 align-items-center'>
-                                <CalendarMonthIcon className='text-secondary' fontSize='small' />
-                                <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Appointment</span>
+                            <div className='d-flex ms-2 my-4 align-items-center' 
+                            style={{ cursor: 'pointer' }}
+                            onClick={()=>{navigate('/doctors-list')}}
+                            >
+                                <ListIcon className='text-secondary' fontSize='small' />
+                                <Typography variant="body2" component="span" className='ms-3' style={{ fontSize: 'small', color: 'text.secondary' }}>
+                                Doctor List
+                                </Typography>
                             </div>
-
-                            <div className='d-flex ms-2 my-4 align-items-center'>
-                                <ChatIcon className='text-secondary' fontSize='small' />
-                                <span className='ms-3 fw-bold text-secondary' style={{ fontSize: 'small' }}>Messages</span>
+                            
+                            <div className='d-flex ms-2 my-4 align-items-center' 
+                            style={{ cursor: 'pointer' }}
+                            onClick={()=>{navigate('/pick-slot')}}
+                            >
+                                <TodayIcon className='text-secondary' fontSize='small' />
+                                <Typography variant="body2" component="span" className='ms-3' fontWeight="bold" style={{ fontSize: 'small', color: 'text.secondary' }}>
+                                    Appointment Booking
+                                </Typography>
                             </div>
-
 
                         </div>
                     </div>

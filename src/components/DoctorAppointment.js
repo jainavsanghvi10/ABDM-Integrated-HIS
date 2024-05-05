@@ -248,7 +248,7 @@ const DoctorAppointment = () => {
 
     function handleLogout() {
         localStorage.removeItem('token');
-        window.location.reload();
+        navigate('/user-login');
     }
 
     return (

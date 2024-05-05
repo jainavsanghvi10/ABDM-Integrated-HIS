@@ -11,26 +11,45 @@ const UserLogin = () => {
 
     const [userId, setUserId] = useState('');
     const [password, setPassword] = useState('');
+    const [role, setRole] = useState('');
 
-    const handleLogin = () => {
+    const fetchStaffByToken = async (token) => {
         const data = {
-            email: userId,
-            password: password
-        };
-
-        // POST request to the server API
-        axios.post('http://localhost:8088/auth/user/signin', data)
+            jwtToken: token
+        }
+        axios.post('http://localhost:8088/auth/getUserByToken', data)
             .then(response => {
-                const token = response.data;
-                localStorage.removeItem('token');
-                localStorage.setItem('token', token);
-                // console.log('JWT Token:', token);
-                navigate('/doctor-appointment')
+                if(response.data.role === "doctor")
+                    navigate("/doctor-appointment")
+                if(response.data.role === "receptionist")
+                    navigate("/patient/register")
             })
             .catch(error => {
                 alert("Invalid Credential")
                 console.error('Errors logging in:', error);
             });
+    };
+
+    const handleLogin = async () => {
+        const data = {
+            email: userId,
+            password: password
+        };
+
+        axios.post('http://localhost:8088/auth/user/signin', data)
+            .then(response => {
+                const token = response.data;
+                localStorage.removeItem('token');
+                localStorage.setItem('token', token);
+                
+                fetchStaffByToken(token)
+            })
+            .catch(error => {
+                alert("Invalid Credential")
+                console.error('Errors logging in:', error);
+            });
+
+            
     };
 
     return (
