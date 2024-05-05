@@ -63,21 +63,29 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import HistoryIcon from '@mui/icons-material/History';
+import LayersClearIcon from '@mui/icons-material/LayersClear';
 
 const DoctorAppointment = () => {
 	const { loginStatus, did, loginFunc } = useAuth();
 	const navigate = useNavigate();
 
     const [openModal, setOpenModal] = useState(false);
+    const [currPatient, setCurrPatient] = useState(null);
+    const [currAppointment, setCurrAppointment] = useState(null);
+    const [enteredPid ,setEnteredPid] = useState('');
 
-    const [docName, setDocName] = useState('Loading...')
-    const [docId, setDocId] = useState(null)
-    const [appointmentList, setAppointmentList] = useState([])
-    const [patientCardElement, setPatientCardElement] = useState([]);
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [fileName, setFileName] = useState('');
-    const [patientId, setPatientId] = useState('PID-1');
-    const fileInputRef = useRef(null);
+	const [docName, setDocName] = useState('Loading...');
+	const [docId, setDocId] = useState(null);
+	const [appointmentList, setAppointmentList] = useState();
+	const [patientCardElement, setPatientCardElement] = useState([]);
+	const [selectedFile, setSelectedFile] = useState(null);
+	const [fileName, setFileName] = useState('');
+	const [viewFile, setViewFile] = useState(false);
+	const [patientId, setPatientId] = useState('PID-1');
+
+	const fileInputRef = useRef(null);
+	const [patientDocumentDetails, setPatientDocumentDetails] = useState([]);
 
     const [open, setOpen] = React.useState(false);
 
@@ -135,19 +143,12 @@ const DoctorAppointment = () => {
 		// navigate('/user-login')
 	}, []);
 
-	useEffect(() => {
-		if (appointmentList != null) handleFetchAppointments();
-	}, [appointmentList]);
-	useEffect(() => {
-		if (docId != null) fetchAppointments();
-	}, [docId]);
-
     useEffect(() => {
-        if (appointmentList != null)
+        if (appointmentList)
             handleFetchAppointments();
     }, [appointmentList])
     useEffect(() => {
-        if (docId != null)
+        if (docId)
             fetchAppointments();
     }, [docId])
 
@@ -157,7 +158,6 @@ const DoctorAppointment = () => {
                 `http://localhost:8086/patients/${pid}`
             );
             console.log(response.data);
-            setAppointmentList(response.data);
             return response.data
         } catch (error) {
             alert('Cannot Fetch');
@@ -193,15 +193,17 @@ const DoctorAppointment = () => {
 		}
 	}
 
-	async function handleAppointmentStatus(a) {
+	async function handleAppointmentStatus(a ,status) {
+        console.log(a.startTime,a.endTime,status,a.date)
 		const appointmentData = {
+
 			startTime: a.startTime,
 			endTime: a.endTime,
-			status: 1,
+			status: status,
 			date: a.date,
 		};
 		await axios
-			.post(
+			.put(
 				`http://localhost:8086/doctor/${docId}/updateAppointment/${a.appointmentId}`,
 				appointmentData
 			)
@@ -212,7 +214,7 @@ const DoctorAppointment = () => {
 				alert('Appointment status not updated');
 				console.error('Errors logging in:', error);
 			});
-		// window.location.reload()
+		window.location.reload()
 	}
 
 	async function handleConsentRequest() {
@@ -297,16 +299,24 @@ const DoctorAppointment = () => {
         console.log('Clearing Patient Documents');
 	};
 
+    async function handleVerifyPid(e){
+        e.preventDefault();
+        if(enteredPid === currPatient){
+            await handleAppointmentStatus(currAppointment, 1);
+            handleClick();
+            setOpenModal(false);
+        }
+    }
+
 	async function handleFetchAppointments() {
-		// console.log("form appointments")
 		const tempElement = [];
+        if(!appointmentList) return;
 		for (let i = 0; i < appointmentList.length; i++) {
 			let a = appointmentList[i];
 			let start = a.startTime.split(':').slice(0, 2).join(':');
 			let end = a.endTime.split(':').slice(0, 2).join(':');
 
             const patient = await fetchPatient(a.patientId);
-            console.log(patient);
 
             tempElement.push(
                 <Accordion key={a.appointmentId}>
@@ -320,19 +330,23 @@ const DoctorAppointment = () => {
                                 <span className='mx-2 font-blue' style={{ fontSize: 'small' }}>{start} - {end}</span>
                             </div>
                             <div className='px-2 col-5'>
-                                <span className='ms-2 fw-bold font-blue' style={{ fontSize: 'small' }}>User {a.appointmentId}</span>
+                                <span className='ms-2 fw-bold font-blue' style={{ fontSize: 'small' }}>{patient.name}</span>
                             </div>
-                            {a.status ?
+                            {a.status == 2 ?
                                 <div className='col-2 d-flex'>
                                     <DoneAllIcon className='px-0 font-green' fontSize='small' />
                                     <span className='ms-2 font-green fw-bold' style={{ fontSize: 'small' }}>Completed</span>
-                                </div>
-                                :
+                                </div> : <></>}
+                            {a.status == 1 ?
                                 <div className='col-2 d-flex'>
-                                    <PendingOutlinedIcon className='px-0 font-grey' fontSize='small' />
-                                    <span className='ms-2 font-grey fw-bold' style={{ fontSize: 'small' }}>Pending</span>
-                                </div>
-                            }
+                                    <PendingActionsIcon className='px-0 font-purple' fontSize='small' />
+                                    <span className='ms-2 font-purple fw-bold' style={{ fontSize: 'small' }}>Ongoing</span>
+                                </div> : <></>}
+                            {a.status == 0 ?
+                                <div className='col-2 d-flex'>
+                                    <PendingOutlinedIcon className='px-0 text-secondary' fontSize='small' />
+                                    <span className='ms-2 text-secondary fw-bold' style={{ fontSize: 'small' }}>Pending</span>
+                                </div> : <></>}
                         </div>
                     </AccordionSummary>
                     <AccordionDetails>
@@ -373,12 +387,16 @@ const DoctorAppointment = () => {
 									/>
 									Request
 								</Button>
+                                </div>
+                                <div
+								className='pb-3'
+								style={{ display: 'flex', alignItems: 'center' }}>
 								<Button
 									className='me-4 rounded bg-purple text-white'
 									variant='extended'
 									size='small'
 									onClick={handleFetchRequest}>
-									<CloudDownloadIcon
+									<HistoryIcon
 										className='ms-1'
 										sx={{ mr: 1 }}
 										fontSize='small'
@@ -390,7 +408,7 @@ const DoctorAppointment = () => {
 									variant='extended'
 									size='small'
 									onClick={handleRemoveRequest}>
-									<CloudDownloadIcon
+									<LayersClearIcon
 										className='ms-1'
 										sx={{ mr: 1 }}
 										fontSize='small'
@@ -399,7 +417,17 @@ const DoctorAppointment = () => {
 								</Button>
 							</div>
 						</form>
-						<Button
+                        {a.status == 0 ?
+                        <Button
+                            variant="outlined"
+                            color='secondary'
+                            style={{ textTransform: 'capitalize', color: '#4200FF', borderColor: '#4200FF' }}
+                            className='p-3 my-4 me-3 fw-bold'
+                            onClick={() => {setOpenModal(true); setCurrPatient(patient.patientId); setCurrAppointment(a);}}
+                            >
+                            Start Appointment
+                        </Button> : <></>}
+						{a.status == 1 ? <Button
 							variant='outlined'
 							color='secondary'
 							style={{
@@ -409,14 +437,15 @@ const DoctorAppointment = () => {
 							}}
 							className='p-3 my-4 fw-bold'
 							onClick={() => {
-								handleAppointmentStatus(a);
+								handleAppointmentStatus(a, 2);
 							}}>
 							Appointment Completed
-						</Button>
+						</Button> : <></>}
 					</AccordionDetails>
 				</Accordion>
 			);
 		}
+        console.log(tempElement)
 		setPatientCardElement(tempElement);
 	}
 
@@ -460,91 +489,90 @@ const DoctorAppointment = () => {
                 <div className="d-flex">
                     {/* <button onClick={fetchAppointments}>Update Appointment</button> */}
                     <div className="w-sidebar me-3 pt-4 border-end border-3">
+                        <div>
+                            <div className='d-flex ms-2 my-4 align-items-center'>
+                                <WheelchairPickupIcon
+                                    className='text-secondary'
+                                    fontSize='small'
+                                />
+                                <span
+                                    className='ms-3 fw-bold text-secondary'
+                                    style={{ fontSize: 'small' }}>
+                                    Top Doctor's
+                                </span>
+                            </div>
 
-								<div className='d-flex ms-2 my-4 align-items-center'>
-									<WheelchairPickupIcon
-										className='text-secondary'
-										fontSize='small'
-									/>
-									<span
-										className='ms-3 fw-bold text-secondary'
-										style={{ fontSize: 'small' }}>
-										Top Doctor's
-									</span>
-								</div>
+                            <div className='d-flex ms-2 my-4 align-items-center'>
+                                <CalendarMonthIcon
+                                    className='text-secondary'
+                                    fontSize='small'
+                                />
+                                <span
+                                    className='ms-3 fw-bold text-secondary'
+                                    style={{ fontSize: 'small' }}>
+                                    Appointment
+                                </span>
+                            </div>
 
-								<div className='d-flex ms-2 my-4 align-items-center'>
-									<CalendarMonthIcon
-										className='text-secondary'
-										fontSize='small'
-									/>
-									<span
-										className='ms-3 fw-bold text-secondary'
-										style={{ fontSize: 'small' }}>
-										Appointment
-									</span>
-								</div>
+                            <div className='d-flex ms-2 my-4 align-items-center'>
+                                <ChatIcon className='text-secondary' fontSize='small' />
+                                <span
+                                    className='ms-3 fw-bold text-secondary'
+                                    style={{ fontSize: 'small' }}>
+                                    Messages
+                                </span>
+                            </div>  
 
-								<div className='d-flex ms-2 my-4 align-items-center'>
-									<ChatIcon className='text-secondary' fontSize='small' />
-									<span
-										className='ms-3 fw-bold text-secondary'
-										style={{ fontSize: 'small' }}>
-										Messages
-									</span>
-								</div>
-							</div>
-						</div>
+                            <Divider className='mb-4' style={{ height: '2px' }} />
 
-						<Divider className='mb-4' style={{ height: '2px' }} />
+                            <div className='ps-3'>
+                                <div className='d-flex justify-content-between'>
+                                    <span className='fw-bold'>Profile</span>
+                                </div>
 
-						<div className='ps-3'>
-							<div className='d-flex justify-content-between'>
-								<span className='fw-bold'>Profile</span>
-							</div>
+                                <div className='py-2'>
+                                    <div className='d-flex ms-2 my-4 align-items-center'>
+                                        <PersonIcon className='text-secondary' fontSize='small' />
+                                        <span
+                                            className='ms-3 fw-bold text-secondary'
+                                            style={{ fontSize: 'small' }}>
+                                            Profile Settings
+                                        </span>
+                                    </div>
 
-							<div className='py-2'>
-								<div className='d-flex ms-2 my-4 align-items-center'>
-									<PersonIcon className='text-secondary' fontSize='small' />
-									<span
-										className='ms-3 fw-bold text-secondary'
-										style={{ fontSize: 'small' }}>
-										Profile Settings
-									</span>
-								</div>
+                                    <div className='d-flex ms-2 my-4 align-items-center'>
+                                        <NotificationsActiveIcon
+                                            className='text-secondary'
+                                            fontSize='small'
+                                        />
+                                        <span
+                                            className='ms-3 fw-bold text-secondary'
+                                            style={{ fontSize: 'small' }}>
+                                            Notification
+                                        </span>
+                                    </div>
 
-								<div className='d-flex ms-2 my-4 align-items-center'>
-									<NotificationsActiveIcon
-										className='text-secondary'
-										fontSize='small'
-									/>
-									<span
-										className='ms-3 fw-bold text-secondary'
-										style={{ fontSize: 'small' }}>
-										Notification
-									</span>
-								</div>
+                                    <div className='d-flex ms-2 my-4 align-items-center'>
+                                        <SettingsIcon className='text-secondary' fontSize='small' />
+                                        <span
+                                            className='ms-3 fw-bold text-secondary'
+                                            style={{ fontSize: 'small' }}>
+                                            Help & Settings
+                                        </span>
+                                    </div>
 
-								<div className='d-flex ms-2 my-4 align-items-center'>
-									<SettingsIcon className='text-secondary' fontSize='small' />
-									<span
-										className='ms-3 fw-bold text-secondary'
-										style={{ fontSize: 'small' }}>
-										Help & Settings
-									</span>
-								</div>
-
-								<div className='d-flex ms-2 my-4 align-items-center'>
-									<InfoIcon className='text-secondary' fontSize='small' />
-									<span
-										className='ms-3 fw-bold text-secondary'
-										style={{ fontSize: 'small' }}>
-										About DocSwift
-									</span>
-								</div>
-							</div>
-						</div>
-					</div>
+                                    <div className='d-flex ms-2 my-4 align-items-center'>
+                                        <InfoIcon className='text-secondary' fontSize='small' />
+                                        <span
+                                            className='ms-3 fw-bold text-secondary'
+                                            style={{ fontSize: 'small' }}>
+                                            About DocSwift
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
 					<div className='flex-fill w-50 py-3'>
 						<div className='mb-4'>
@@ -644,105 +672,6 @@ const DoctorAppointment = () => {
 						)}
 					</div>
 
-                        <p className='my-4 fw-bold'>Scheduled Appointments</p>
-
-                        <div className=''>
-                            <div className='row align-items-center w-100'>
-                                <div className='col-3'>
-                                    <span className='ms-4 text-secondary' style={{ fontSize: 'small' }}>Time Slot</span>
-                                </div>
-                                <div className='px-2 col-5'>
-                                    <span className='ms-2 text-secondary' style={{ fontSize: 'small' }}>Patient Name</span>
-                                </div>
-                                <div className='col-2 d-flex'>
-                                    <span className='ms-2 text-secondary' style={{ fontSize: 'small' }}>Status</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            {/* {patientCardElement} */}
-                            <Accordion>
-                                <AccordionSummary
-                                    expandIcon={<ArrowDropDownIcon />}
-                                    aria-controls="panel2-content"
-                                    id="panel2-header"
-                                >
-                                    <div className='row align-items-center w-100'>
-                                        <div className='col-3'>
-                                            <span className='mx-2 font-blue' style={{ fontSize: 'small' }}></span>
-                                        </div>
-                                        <div className='px-2 col-5'>
-                                            <span className='ms-2 fw-bold font-blue' style={{ fontSize: 'small' }}>User </span>
-                                        </div>
-                                        {/* {a.status ? */}
-                                        <div className='col-2 d-flex'>
-                                            <DoneAllIcon className='px-0 font-green' fontSize='small' />
-                                            <span className='ms-2 font-green fw-bold' style={{ fontSize: 'small' }}>Completed</span>
-                                        </div>
-                                        <div className='col-2 d-flex'>
-                                            <PendingActionsIcon className='px-0 font-purple' fontSize='small' />
-                                            <span className='ms-2 font-purple fw-bold' style={{ fontSize: 'small' }}>Ongoing</span>
-                                        </div>
-                                        {/* : */}
-                                        <div className='col-2 d-flex'>
-                                            <PendingOutlinedIcon className='px-0 text-secondary' fontSize='small' />
-                                            <span className='ms-2 text-secondary fw-bold' style={{ fontSize: 'small' }}>Pending</span>
-                                        </div>
-                                        {/* } */}
-                                    </div>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <p className='text-secondary fw-bold'>Purpose:</p>
-                                    <p style={{ fontSize: 'small' }} className='text-secondary'>
-                                        Cough and Cold
-                                    </p>
-                                    {/* <input class="form-control" type="file" id="formFile"></input> */}
-                                    {/* <Fab className='me-4 rounded' variant="extended" size="small" color='primary'>
-                            <UploadIcon className='ms-1' sx={{ mr: 1 }} fontSize='small' />
-                            <span className='fw-bold me-2' style={{ fontSize: '11px', textTransform: 'capitalize' }}>Upload</span>
-                        </Fab> */}
-                                    <form>
-                                        <div className='py-3' style={{ display: 'flex', alignItems: 'center' }}>
-                                            <Button
-                                                className='me-4 rounded bg-purple text-white' variant="extended" size="small"
-                                                onClick={handleUploadNavigate}
-                                            >
-                                                <UploadIcon
-                                                    className='ms-1' sx={{ mr: 1 }} fontSize='small'
-                                                />
-                                                Upload
-                                            </Button>
-                                            <Button
-                                                className='me-4 rounded bg-purple text-white' variant="extended" size="small"
-                                                onClick={handleConsentRequest}
-                                            >
-                                                <CloudDownloadIcon
-                                                    className='ms-1' sx={{ mr: 1 }} fontSize='small'
-                                                />
-                                                Request
-                                            </Button>
-                                        </div>
-                                    </form>
-                                    <Button
-                                        variant="outlined"
-                                        color='secondary'
-                                        style={{ textTransform: 'capitalize', color: '#4200FF', borderColor: '#4200FF' }}
-                                        className='p-3 my-4 me-3 fw-bold'
-                                        onClick={() => setOpenModal(true)}
-                                    >Start Appointment</Button>
-                                    <Button
-                                        variant="outlined"
-                                        color='secondary'
-                                        style={{ textTransform: 'capitalize', color: '#4200FF', borderColor: '#4200FF' }}
-                                        className='p-3 my-4 me-3 fw-bold'
-                                    // onClick={() => { handleAppointmentStatus(a) }}
-                                    >Appointment Completed</Button>
-                                </AccordionDetails>
-                            </Accordion>
-                        </div>
-                    </div>
-
                     <div className='flex-fill d-flex justify-content-end mx-0 px-0'>
                         <div className='border border-top-0 border-3'>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -756,17 +685,14 @@ const DoctorAppointment = () => {
                             <DialogTitle>Enter Patient ID</DialogTitle>
                             <DialogContent>Fill in the information of the patient.</DialogContent>
                             <form
-                                onSubmit={(event) => {
-                                    event.preventDefault();
-                                    setOpenModal(false);
-                                }}
+                                onSubmit={handleVerifyPid}
                             >
                                 <Stack spacing={2}>
                                     <FormControl>
                                         <FormLabel>PID</FormLabel>
-                                        <Input autoFocus/>
+                                        <Input onChange={(e)=>{setEnteredPid(e.target.value)}} autoFocus/>
                                     </FormControl>
-                                    <Button variant='contained' type="submit" onClick={handleClick}>Submit</Button>
+                                    <Button variant='contained' type="submit">Submit</Button>
                                 </Stack>
                             </form>
                         </ModalDialog>

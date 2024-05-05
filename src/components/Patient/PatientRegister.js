@@ -25,13 +25,14 @@ import TodayIcon from '@mui/icons-material/Today';
 import Typography from '@mui/material/Typography';
 
 const PatientRegister = () => {
-
+    const [name, setName] = useState('');
     const [formData, setFormData] = useState({
         username: '',
         email: '',
         gender: '',
         dob: '',
-        abhaAddress: ''
+        abhaAddress: '',
+        name: ''
     });
     const navigate = useNavigate();
 
@@ -175,6 +176,8 @@ const PatientRegister = () => {
                             <p className="fw-bold font-purple mb-3 ms-2" style={{ fontSize: 'large' }}>Patient Register</p>
                             {/* <label for="exampleFormControlInput1" class="form-label">Enter Mobile Number</label> */}
                             <input type="text" className="my-2 p-3 border border-2 fw-bold" style={{ width: '350px', fontSize: 'small' }} id="username" onChange={handleChange} placeholder="Username">
+                            </input>
+                            <input type="text" className="my-2 p-3 border border-2 fw-bold" style={{ width: '350px', fontSize: 'small' }} id="name" onChange={handleChange} placeholder="Name">
                             </input>
                             <input type="text" className="my-2 p-3 border border-2 fw-bold" style={{ width: '350px', fontSize: 'small' }} id="email" onChange={handleChange} placeholder="Email Address">
                             </input>
