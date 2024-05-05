@@ -73,7 +73,7 @@ const DoctorAppointment = () => {
                     currDoc = d;
                 }
             }
-            console.log(currDoc);
+            // console.log(currDoc);
             setDocName(currDoc.username);
             setDocId(currDoc.doctorId);
         };
@@ -95,6 +95,19 @@ const DoctorAppointment = () => {
         if (docId != null)
             fetchAppointments();
     }, [docId])
+
+    const fetchPatient = async (pid) => {
+        try {
+            const response = await axios.get(
+                `http://localhost:8086/patients/${pid}`
+            );
+            console.log(response.data);
+            setAppointmentList(response.data);
+            return response.data
+        } catch (error) {
+            alert('Cannot Fetch');
+        }
+    }
 
 	const fetchAllDocs = async () => {
         try {
@@ -205,6 +218,9 @@ const DoctorAppointment = () => {
             let start = a.startTime.split(":").slice(0, 2).join(":")
             let end = a.endTime.split(":").slice(0, 2).join(":")
 
+            const patient = await fetchPatient(a.patientId);
+            console.log(patient);
+
             tempElement.push(
                 <Accordion key={a.appointmentId}>
                     <AccordionSummary
@@ -275,6 +291,8 @@ const DoctorAppointment = () => {
                 </Accordion>
             )
         }
+        console.log(tempElement);
+        if(tempElement != [])
         setPatientCardElement(tempElement);
     }
 
@@ -303,7 +321,6 @@ const DoctorAppointment = () => {
 
     return (
         <>
-        <button onClick={handleFileFetch}>Fetch Fhir</button>
             <div>
                 <div className="px-3 py-3 d-flex align-items-center justify-content-between border-bottom border-3">
                     <div className='d-flex align-items-center'>

@@ -40,6 +40,9 @@ import TodayIcon from '@mui/icons-material/Today';
 import Typography from '@mui/material/Typography';
 import { useNavigate } from 'react-router-dom';
 
+import Alert from '@mui/material/Alert';
+import CheckIcon from '@mui/icons-material/Check';
+
 // const shouldDisableTime = (value, view) => {
 //     const hour = value.hour();
 //     if (view === 'hours') {
@@ -59,6 +62,8 @@ const PickSlot = () => {
     const [docName, setDocName] = useState(null);
     const [docAge, setDocAge] = useState(null);
     const [patientId, setPatientId] = useState(null);
+
+    const [show, setShow] = useState(false);
 
     const navigate = useNavigate();
 
@@ -131,6 +136,7 @@ const PickSlot = () => {
         await axios.post(`http://localhost:8086/doctor/${staffId}/bookAppointment/${appointmentId}/${patientId}`, appointmentData)
             .then(response => {
                 console.log(response.data);
+                setShow(true);
             })
             .catch(error => {
                 alert("Appointment not created")
@@ -164,6 +170,7 @@ const PickSlot = () => {
                     <span className='ms-3 fw-bold font-purple' style={{ fontSize: 'small' }}>Logout</span>
                 </Button>
             </div>
+            {show ? <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">Here is a gentle confirmation that your action was successful.</Alert> : <></>}
             <div className="d-flex">
                 <div className="w-sidebar pt-4 border-end border-3">
 
