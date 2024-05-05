@@ -60,3 +60,27 @@ td, th{
   width: 250px;
   min-height:100vh;
 }
+
+
+
+pre {
+  outline: 1px solid #ccc;
+  padding: 5px;
+  margin: 15px;
+  background-color: white;
+}
+.string {
+  color: green;
+}
+.number {
+  color: darkorange;
+}
+.boolean {
+  color: blue;
+}
+.null {
+  color: magenta;
+}
+.key {
+  color: black;
+}

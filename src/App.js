@@ -24,6 +24,7 @@ import CreateDocument from './components/CreateDocument';
 import HealthRecord from './components/HealthRecord';
 import TrashCopy from './components/TrashCopy';
 import CareContext from './components/CareContext';
+import RequestDocument from './components/RequestDocument';
 //0502
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
         <Route path='/test' element={<TrashCopy/>}/>
 
         <Route path='/care-context' element={<CareContext/>}/>
+        <Route path='/request-document' element={<RequestDocument/>}/>
 
       </Routes>
       </AuthProvider>
