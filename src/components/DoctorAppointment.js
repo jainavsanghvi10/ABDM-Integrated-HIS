@@ -226,7 +226,6 @@ const DoctorAppointment = () => {
 										className='ms-1' sx={{ mr: 1 }} fontSize='small' 
 									/>
 									Upload
-                                     {/* <span className='fw-bold me-2' style={{ fontSize: '11px', textTransform: 'capitalize' }}>Upload</span> */}
 								</Fab>
 							</div>
 						</form>
