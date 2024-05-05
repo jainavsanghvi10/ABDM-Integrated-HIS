@@ -1,4 +1,7 @@
-import * as React from 'react';
+import React, {useState, useRef} from 'react';
+import axios from 'axios';
+import dayjs from 'dayjs';
+
 import Tabs from '@mui/joy/Tabs';
 import TabList from '@mui/joy/TabList';
 import Tab from '@mui/joy/Tab';
@@ -25,6 +28,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import InfoIcon from '@mui/icons-material/Info';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { useNavigate } from 'react-router-dom';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -40,10 +44,74 @@ const VisuallyHiddenInput = styled('input')({
 
 const HealthRecord = () => {
 
+    const [patientId, setPatientId] = useState('PID-1');
+    const [recordTitle, setRecordTitle] = useState(null);
+    const [lang, setLang] = useState("English");
+    const [recordType, setRecordType] = useState("Health Record");
+    const [fileType, setFileType] = useState("PDF");
+    const fileInputRef = useRef(null);
+
+    const navigate = useNavigate();
+
     function handleLogout() {
         localStorage.removeItem('token');
-        window.location.reload();
+        navigate("/user-login")
     }
+
+    function extractDate(date) {
+        return date["$d"].toJSON().split("T")[0]
+    }
+
+    const handleUpload = async (e) => {
+		e.preventDefault();
+
+        console.log('File:', fileInputRef.current.files[0]);
+        console.log('File Name:', fileInputRef.current.files[0].name);
+        console.log('Patient ID:', patientId);
+        console.log('File Type:', fileType);
+        console.log('Lang:', lang);
+        console.log('Start Date:', extractDate(dayjs()));
+        console.log('End Date:', extractDate(dayjs().add(2, 'day')));
+        console.log('Display:', recordTitle);
+        console.log('Record Type:', recordType);
+
+        console.log(fileInputRef.current.files[0]);
+		if(fileInputRef.current.files.length==0){
+            console.log('No file selected');
+            return;
+        }
+    
+		const formData = new FormData();
+        formData.append('file', fileInputRef.current.files[0]);
+        formData.append('fileName', fileInputRef.current.files[0].name);
+        formData.append('patientId', patientId);
+        formData.append('fileType', fileType);
+        formData.append('lang', lang);
+        formData.append('startDate', extractDate(dayjs()));
+        formData.append('endDate', extractDate(dayjs().add(2, 'day')));
+        formData.append('display', recordTitle);
+        formData.append('recordType', recordType);
+
+		console.log(formData);
+		try {
+			const response = await axios.post(
+				'http://localhost:8086/Team-10/medicalRecord/store-record',
+				formData,
+				{
+					headers: {
+						'Content-Type': 'multipart/form-data',
+					},
+				}
+			);
+
+			console.log(response.data);
+            navigate("/doctor-appointment")
+            // fileInputRef.current.value = ''; 
+		} catch (error) {
+			console.error('Error uploading file:', error);
+            fileInputRef.current.value = ''; 
+		}
+	};
 
     return (
         <>
@@ -131,27 +199,29 @@ const HealthRecord = () => {
                                 </div>
                                 <form className='w-50 px-5'>
                                     <div className="mb-3">
-                                        <label className="font-small fw-bold form-label">Type of Record</label>
-                                        <input type="text" placeholder='eg: Wellness Record' className="form-control text-secondary font-small" id="exampleInputEmail1" aria-describedby="emailHelp" />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="font-small fw-bold form-label">Content Type</label>
-                                        <select id="disabledSelect" className="form-select text-secondary font-small">
-                                            <option>Disabled select</option>
-                                        </select>
+                                        <label className="font-small fw-bold form-label">Record Title</label>
+                                        <input onChange={(e)=>{setRecordTitle(e.target.value)}} type="text" className="form-control text-secondary font-small" id="exampleInputEmail1" aria-describedby="emailHelp" />
                                     </div>
                                     <div className="mb-3">
                                         <label className="font-small fw-bold form-label">Language</label>
-                                        <select id="disabledSelect" className="form-select text-secondary font-small">
-                                            <option>EN/IN</option>
-                                        </select>
+                                        <input onChange={(e)=>{setLang(e.target.value)}} type="text" className="form-control text-secondary font-small" id="exampleInputEmail1" aria-describedby="emailHelp" />
                                     </div>
-
                                     <div className="mb-3">
-                                        <label className="font-small fw-bold form-label">Type of Record</label>
-                                        <select id="disabledSelect" className="form-select text-secondary font-small">
-                                            <option>Report</option>
-                                        </select>
+                                        <label className="font-small fw-bold form-label">Record Type</label>
+                                        <input onChange={(e)=>{setRecordType(e.target.value)}} type="text" className="form-control text-secondary font-small" id="exampleInputEmail1" aria-describedby="emailHelp" />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="font-small fw-bold form-label">File Type</label>
+                                        <input onChange={(e)=>{setFileType(e.target.value)}} type="text" className="form-control text-secondary font-small" id="exampleInputEmail1" aria-describedby="emailHelp" />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="font-small fw-bold form-label">Upload File</label>
+                                        <input
+                                            className='form-control w-50'
+                                            type='file'
+                                            id='formFile'
+                                            ref={fileInputRef}
+                                        />
                                     </div>
 
                                     <div className="mt-5 ">
@@ -163,12 +233,10 @@ const HealthRecord = () => {
                                             style={{ color: '#4200FF', borderColor: '#4200FF', fontSize: 'small', textTransform: 'capitalize' }}
                                             tabIndex={-1}
                                             startIcon={<CloudUploadIcon />}
+                                            onClick={handleUpload}
                                         >
                                             Upload file
-                                            <VisuallyHiddenInput type="file" />
                                         </Button>
-
-                                        <Button className='fw-bold p-2 px-5 text-capitalize' variant='contained' type="submit" style={{ background: 'rgb(66, 0, 255)' }}>Submit</Button>
                                     </div>
                                 </form>
                             </div>

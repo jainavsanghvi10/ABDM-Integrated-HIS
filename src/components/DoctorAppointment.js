@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef  } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import dayjs from 'dayjs';
 
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -39,6 +40,7 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import PendingOutlinedIcon from '@mui/icons-material/PendingOutlined';
 import AccessibleOutlinedIcon from '@mui/icons-material/AccessibleOutlined';
 import VerifiedIcon from '@mui/icons-material/Verified';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
 import Rating from '@mui/material/Rating';
 
@@ -63,15 +65,17 @@ const DoctorAppointment = () => {
             const data = {
                 jwtToken: token
             }
-            axios.post('http://localhost:8088/auth/getUserByToken', data)
-                .then(response => {
-                    setDocId(response.data.id);
-                    setDocName(response.data.username);
-                })
-                .catch(error => {
-                    alert("Invalid Credential")
-                    console.error('Errors logging in:', error);
-                });
+            const response = await axios.post('http://localhost:8088/auth/getUserByToken', data)
+            const listDocs = await fetchAllDocs();
+            let currDoc = null;
+            for(let d of listDocs){
+                if(d.username === response.data.username){
+                    currDoc = d;
+                }
+            }
+            console.log(currDoc);
+            setDocName(currDoc.username);
+            setDocId(currDoc.doctorId);
         };
 
         const token = localStorage.getItem('token');
@@ -92,46 +96,21 @@ const DoctorAppointment = () => {
             fetchAppointments();
     }, [docId])
 
-	// const handleFileChange = (e) => {
-	// 	console.log(e.target.files[0]);
-	// 	// console.log(selectedFile);
-	// 	setSelectedFile(e.target.files[0]);
-	// 	setFileName(e.target.files[0].name);
-	// };
-
-	const handleUpload = async (e) => {
-		e.preventDefault();
-        console.log('Uploading File...');
-        console.log(fileInputRef.current.files[0]);
-		if(fileInputRef.current.files.length==0){
-            console.log('No file selected');
-            return;
+	const fetchAllDocs = async () => {
+        try {
+            const response = await axios.get(
+                'http://localhost:8086/doctor/allDoctors'
+            );
+            return response.data
+        } catch (error) {
+            alert('Cannot Fetch');
         }
-        
-		const formData = new FormData();
-		formData.append('file', fileInputRef.current.files[0]);
-    	formData.append('fileName', fileInputRef.current.files[0].name);
-		formData.append('patientId', patientId);
-		console.log(formData);
-		try {
-			const response = await axios.post(
-				'http://localhost:8086/Team-10/medicalRecord/store-record',
-				formData,
-				{
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-				}
-			);
+    };
 
-			console.log(response.data);
-            // Reset the file input:
-            fileInputRef.current.value = ''; 
-		} catch (error) {
-			console.error('Error uploading file:', error);
-            fileInputRef.current.value = ''; 
-		}
-	};
+    const handleUploadNavigate = () => {
+        console.log("upload");
+        navigate(`/health-record?pid=${patientId}`);
+    }
 
     async function fetchAppointments() {
         try {
@@ -162,6 +141,60 @@ const DoctorAppointment = () => {
                 console.error('Errors logging in:', error);
             });
         // window.location.reload()
+    }
+
+    async function handleConsentRequest(){
+        const data = {
+            "requestId": "feea6181-a4f0-4222-866d-9193db1f10f4",
+            "timestamp": "2024-05-05T15:30:00Z",
+            "consent": {
+                "purpose": {
+                    "text": "string",
+                    "code": "CAREMGT"
+                },
+                "patient": {
+                    "id": "jainav.jain@sbx"
+                },
+                "hiu": {
+                    "id": "IN0610089630"
+                },
+                "requester": {
+                    "name": "Dr. Anurag",
+                    "identifier": {
+                        "type": "REGNO",
+                        "value": "MH1001",
+                        "system": "https://www.mciindia.org"
+                    }
+                },
+                "hiTypes": [
+                // "DiagnosticReport"
+                "Prescription",
+                "DischargeSummary",
+                "OPConsultation",
+                "ImmunizationRecord",
+                "WellnessRecord",
+                "HealthDocumentRecord"
+                ],
+                "permission": {
+                    "accessMode": "VIEW",
+                    "dateRange": {
+                        "from": "2024-01-25T12:52:34.925Z",
+                        "to": "2024-02-14T12:52:34.925Z"
+                        // "from": "2023-05-22T20:09:50.592Z",
+                        // "to": "{{$isoTimestamp}}"
+                    },
+                    "dataEraseAt": "2024-12-25T12:52:34.925Z",
+                    "frequency": {
+                        "unit": "HOUR",
+                        "value": 1,
+                        "repeats": 0
+                    }
+                }
+            }
+        }
+
+        const response = await axios.post("http://localhost:8087/consent-request", data);
+        console.log(response);
     }
 
     async function handleFetchAppointments() {
@@ -209,24 +242,26 @@ const DoctorAppointment = () => {
                             <UploadIcon className='ms-1' sx={{ mr: 1 }} fontSize='small' />
                             <span className='fw-bold me-2' style={{ fontSize: '11px', textTransform: 'capitalize' }}>Upload</span>
                         </Fab> */}
-                        <form onSubmit={handleUpload}>
+                        <form>
 							<div className='py-3' style={{ display: 'flex', alignItems: 'center' }}>
-								<input
-									className='form-control w-50'
-									type='file'
-									id='formFile'
-									// onChange={handleFileChange}
-                                    ref={fileInputRef} 
-								/>
-								<Fab
+								<Button
 									className='me-4 rounded bg-purple text-white' variant="extended" size="small"
-									type='submit'
+                                    onClick={handleUploadNavigate}
 								>
 									<UploadIcon
-										className='ms-1' sx={{ mr: 1 }} fontSize='small' 
+										className='ms-1' sx={{ mr: 1 }} fontSize='small'
 									/>
 									Upload
-								</Fab>
+								</Button>
+								<Button
+									className='me-4 rounded bg-purple text-white' variant="extended" size="small"
+                                    onClick={handleConsentRequest}
+								>
+									<CloudDownloadIcon
+										className='ms-1' sx={{ mr: 1 }} fontSize='small'
+									/>
+									Request
+								</Button>
 							</div>
 						</form>
                         <Button
