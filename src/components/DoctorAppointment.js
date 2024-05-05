@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef  } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -41,24 +41,74 @@ import PendingOutlinedIcon from '@mui/icons-material/PendingOutlined';
 import AccessibleOutlinedIcon from '@mui/icons-material/AccessibleOutlined';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
+
+import FormControl from '@mui/joy/FormControl';
+import FormLabel from '@mui/joy/FormLabel';
+import Input from '@mui/joy/Input';
+import Modal from '@mui/joy/Modal';
+import ModalDialog from '@mui/joy/ModalDialog';
+import DialogTitle from '@mui/joy/DialogTitle';
+import DialogContent from '@mui/joy/DialogContent';
+import Stack from '@mui/joy/Stack';
+import Add from '@mui/icons-material/Add';
 
 import Rating from '@mui/material/Rating';
 
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Snackbar from '@mui/material/Snackbar';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+
 const DoctorAppointment = () => {
     const { loginStatus, did, loginFunc } = useAuth();
     const navigate = useNavigate();
+
+    const [openModal, setOpenModal] = useState(false);
 
     const [docName, setDocName] = useState('Loading...')
     const [docId, setDocId] = useState(null)
     const [appointmentList, setAppointmentList] = useState([])
     const [patientCardElement, setPatientCardElement] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
-	const [fileName, setFileName] = useState('');
-	const [patientId, setPatientId] = useState('PID-1');
+    const [fileName, setFileName] = useState('');
+    const [patientId, setPatientId] = useState('PID-1');
     const fileInputRef = useRef(null);
+
+    const [open, setOpen] = React.useState(false);
+
+    const handleClick = () => {
+        setOpen(true);
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+    };
+
+    const action = (
+        <React.Fragment>
+            {/* <Button color="secondary" size="small" onClick={handleClose}>
+                UNDO
+            </Button> */}
+            <VerifiedIcon className='font-green me-2 '/>
+            <IconButton
+                size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={handleClose}
+            >
+                <CloseIcon fontSize="small" />
+            </IconButton>
+        </React.Fragment>
+    );
 
     useEffect(() => {
         const fetchStaffByToken = async (token) => {
@@ -68,8 +118,8 @@ const DoctorAppointment = () => {
             const response = await axios.post('http://localhost:8088/auth/getUserByToken', data)
             const listDocs = await fetchAllDocs();
             let currDoc = null;
-            for(let d of listDocs){
-                if(d.username === response.data.username){
+            for (let d of listDocs) {
+                if (d.username === response.data.username) {
                     currDoc = d;
                 }
             }
@@ -96,7 +146,7 @@ const DoctorAppointment = () => {
             fetchAppointments();
     }, [docId])
 
-	const fetchAllDocs = async () => {
+    const fetchAllDocs = async () => {
         try {
             const response = await axios.get(
                 'http://localhost:8086/doctor/allDoctors'
@@ -143,7 +193,7 @@ const DoctorAppointment = () => {
         // window.location.reload()
     }
 
-    async function handleConsentRequest(){
+    async function handleConsentRequest() {
         const data = {
             "requestId": "feea6181-a4f0-4222-866d-9193db1f10f4",
             "timestamp": "2024-05-05T15:30:00Z",
@@ -167,13 +217,13 @@ const DoctorAppointment = () => {
                     }
                 },
                 "hiTypes": [
-                // "DiagnosticReport"
-                "Prescription",
-                "DischargeSummary",
-                "OPConsultation",
-                "ImmunizationRecord",
-                "WellnessRecord",
-                "HealthDocumentRecord"
+                    // "DiagnosticReport"
+                    "Prescription",
+                    "DischargeSummary",
+                    "OPConsultation",
+                    "ImmunizationRecord",
+                    "WellnessRecord",
+                    "HealthDocumentRecord"
                 ],
                 "permission": {
                     "accessMode": "VIEW",
@@ -243,27 +293,27 @@ const DoctorAppointment = () => {
                             <span className='fw-bold me-2' style={{ fontSize: '11px', textTransform: 'capitalize' }}>Upload</span>
                         </Fab> */}
                         <form>
-							<div className='py-3' style={{ display: 'flex', alignItems: 'center' }}>
-								<Button
-									className='me-4 rounded bg-purple text-white' variant="extended" size="small"
+                            <div className='py-3' style={{ display: 'flex', alignItems: 'center' }}>
+                                <Button
+                                    className='me-4 rounded bg-purple text-white' variant="extended" size="small"
                                     onClick={handleUploadNavigate}
-								>
-									<UploadIcon
-										className='ms-1' sx={{ mr: 1 }} fontSize='small'
-									/>
-									Upload
-								</Button>
-								<Button
-									className='me-4 rounded bg-purple text-white' variant="extended" size="small"
+                                >
+                                    <UploadIcon
+                                        className='ms-1' sx={{ mr: 1 }} fontSize='small'
+                                    />
+                                    Upload
+                                </Button>
+                                <Button
+                                    className='me-4 rounded bg-purple text-white' variant="extended" size="small"
                                     onClick={handleConsentRequest}
-								>
-									<CloudDownloadIcon
-										className='ms-1' sx={{ mr: 1 }} fontSize='small'
-									/>
-									Request
-								</Button>
-							</div>
-						</form>
+                                >
+                                    <CloudDownloadIcon
+                                        className='ms-1' sx={{ mr: 1 }} fontSize='small'
+                                    />
+                                    Request
+                                </Button>
+                            </div>
+                        </form>
                         <Button
                             variant="outlined"
                             color='secondary'
@@ -412,7 +462,85 @@ const DoctorAppointment = () => {
                         </div>
 
                         <div>
-                            {patientCardElement}
+                            {/* {patientCardElement} */}
+                            <Accordion>
+                                <AccordionSummary
+                                    expandIcon={<ArrowDropDownIcon />}
+                                    aria-controls="panel2-content"
+                                    id="panel2-header"
+                                >
+                                    <div className='row align-items-center w-100'>
+                                        <div className='col-3'>
+                                            <span className='mx-2 font-blue' style={{ fontSize: 'small' }}></span>
+                                        </div>
+                                        <div className='px-2 col-5'>
+                                            <span className='ms-2 fw-bold font-blue' style={{ fontSize: 'small' }}>User </span>
+                                        </div>
+                                        {/* {a.status ? */}
+                                        <div className='col-2 d-flex'>
+                                            <DoneAllIcon className='px-0 font-green' fontSize='small' />
+                                            <span className='ms-2 font-green fw-bold' style={{ fontSize: 'small' }}>Completed</span>
+                                        </div>
+                                        <div className='col-2 d-flex'>
+                                            <PendingActionsIcon className='px-0 font-purple' fontSize='small' />
+                                            <span className='ms-2 font-purple fw-bold' style={{ fontSize: 'small' }}>Ongoing</span>
+                                        </div>
+                                        {/* : */}
+                                        <div className='col-2 d-flex'>
+                                            <PendingOutlinedIcon className='px-0 text-secondary' fontSize='small' />
+                                            <span className='ms-2 text-secondary fw-bold' style={{ fontSize: 'small' }}>Pending</span>
+                                        </div>
+                                        {/* } */}
+                                    </div>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <p className='text-secondary fw-bold'>Purpose:</p>
+                                    <p style={{ fontSize: 'small' }} className='text-secondary'>
+                                        Cough and Cold
+                                    </p>
+                                    {/* <input class="form-control" type="file" id="formFile"></input> */}
+                                    {/* <Fab className='me-4 rounded' variant="extended" size="small" color='primary'>
+                            <UploadIcon className='ms-1' sx={{ mr: 1 }} fontSize='small' />
+                            <span className='fw-bold me-2' style={{ fontSize: '11px', textTransform: 'capitalize' }}>Upload</span>
+                        </Fab> */}
+                                    <form>
+                                        <div className='py-3' style={{ display: 'flex', alignItems: 'center' }}>
+                                            <Button
+                                                className='me-4 rounded bg-purple text-white' variant="extended" size="small"
+                                                onClick={handleUploadNavigate}
+                                            >
+                                                <UploadIcon
+                                                    className='ms-1' sx={{ mr: 1 }} fontSize='small'
+                                                />
+                                                Upload
+                                            </Button>
+                                            <Button
+                                                className='me-4 rounded bg-purple text-white' variant="extended" size="small"
+                                                onClick={handleConsentRequest}
+                                            >
+                                                <CloudDownloadIcon
+                                                    className='ms-1' sx={{ mr: 1 }} fontSize='small'
+                                                />
+                                                Request
+                                            </Button>
+                                        </div>
+                                    </form>
+                                    <Button
+                                        variant="outlined"
+                                        color='secondary'
+                                        style={{ textTransform: 'capitalize', color: '#4200FF', borderColor: '#4200FF' }}
+                                        className='p-3 my-4 me-3 fw-bold'
+                                        onClick={() => setOpenModal(true)}
+                                    >Start Appointment</Button>
+                                    <Button
+                                        variant="outlined"
+                                        color='secondary'
+                                        style={{ textTransform: 'capitalize', color: '#4200FF', borderColor: '#4200FF' }}
+                                        className='p-3 my-4 me-3 fw-bold'
+                                    // onClick={() => { handleAppointmentStatus(a) }}
+                                    >Appointment Completed</Button>
+                                </AccordionDetails>
+                            </Accordion>
                         </div>
                     </div>
 
@@ -423,9 +551,39 @@ const DoctorAppointment = () => {
                             </LocalizationProvider>
                         </div>
                     </div>
+
+                    <Modal open={openModal} onClose={() => setOpenModal(false)}>
+                        <ModalDialog>
+                            <DialogTitle>Enter Patient ID</DialogTitle>
+                            <DialogContent>Fill in the information of the patient.</DialogContent>
+                            <form
+                                onSubmit={(event) => {
+                                    event.preventDefault();
+                                    setOpenModal(false);
+                                }}
+                            >
+                                <Stack spacing={2}>
+                                    <FormControl>
+                                        <FormLabel>PID</FormLabel>
+                                        <Input autoFocus/>
+                                    </FormControl>
+                                    <Button variant='contained' type="submit" onClick={handleClick}>Submit</Button>
+                                </Stack>
+                            </form>
+                        </ModalDialog>
+                    </Modal>
+                    <Snackbar
+                        open={open}
+                        autoHideDuration={4000}
+                        onClose={handleClose}
+                        message="Patient Verified"
+                        action={action}
+                    />
                 </div>
             </div>
         </>
     );
 }
+
+
 export default DoctorAppointment;
