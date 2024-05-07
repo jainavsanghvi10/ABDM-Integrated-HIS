@@ -2,7 +2,7 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-# Backend Services
+# Backend Micro Services
 - Auth Service: [Auth Service](https://github.com/RBang2501/AuthService-ABDM.git)
 - Gateway Service: [Gateway Service](https://github.com/RBang2501/GatewayService-ABDM.git)
 - HMS Service: [HMS Service](https://github.com/RBang2501/HMS-Service-ABDM.git)
